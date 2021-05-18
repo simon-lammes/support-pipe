@@ -7,6 +7,7 @@ import {IonicModule} from '@ionic/angular';
 import {SaveIssuePageRoutingModule} from './save-issue-routing.module';
 
 import {SaveIssuePage} from './save-issue.page';
+import {TranslateModule} from '@ngx-translate/core';
 
 @NgModule({
   imports: [
@@ -14,7 +15,8 @@ import {SaveIssuePage} from './save-issue.page';
     FormsModule,
     IonicModule,
     SaveIssuePageRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TranslateModule
   ],
   declarations: [SaveIssuePage]
 })
