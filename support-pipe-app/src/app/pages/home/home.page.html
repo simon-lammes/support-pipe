@@ -7,6 +7,7 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <app-issue *ngFor="let issue of myPostedIssues$ | async" [issue]="issue"></app-issue>
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button [routerLink]="['/', 'save-issue']">
       <ion-icon name="add"></ion-icon>

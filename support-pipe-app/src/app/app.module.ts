@@ -10,6 +10,9 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import {environment} from '../environments/environment';
+import {NgxsModule} from '@ngxs/store';
+import {MyPostedIssuesState} from './cross-cutting/issue/my-posted-issues/my-posted-issues.state';
 
 @NgModule({
   declarations: [AppComponent],
@@ -27,9 +30,16 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
         deps: [HttpClient],
         useFactory: (http: HttpClient) => new TranslateHttpLoader(http, './assets/i18n/', '.json')
       }
+    }),
+    NgxsModule.forRoot([
+      MyPostedIssuesState
+    ], {
+      developmentMode: !environment.production
     })
   ],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  providers: [{provide: RouteReuseStrategy, useClass: IonicRouteStrategy}],
   bootstrap: [AppComponent],
+  exports: [
+  ]
 })
 export class AppModule {}

@@ -1,5 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
+import {Store} from '@ngxs/store';
+import {PostIssue} from '../../cross-cutting/issue/my-posted-issues/my-posted-issues.actions';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-save-issue',
@@ -10,7 +13,9 @@ export class SaveIssuePage implements OnInit {
   issueForm: FormGroup;
 
   constructor(
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private store: Store,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -20,7 +25,8 @@ export class SaveIssuePage implements OnInit {
     });
   }
 
-  submitIssueForm() {
-    console.log(this.issueForm.value);
+  async submitIssueForm() {
+    await this.store.dispatch(new PostIssue(this.issueForm.value)).toPromise();
+    await this.router.navigateByUrl('/home');
   }
 }
