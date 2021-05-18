@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ 'new-issue' | translate }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button *ngIf="issueForm" (click)="submitIssueForm()"
+                  [disabled]="!issueForm.valid">{{ 'save' | translate }}</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form *ngIf="issueForm" [formGroup]="issueForm">
+    <ion-list>
+      <ion-item>
+        <ion-label>{{ 'title' | translate }}</ion-label>
+        <ion-input type="text" formControlName="title"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>{{ 'description' | translate }}</ion-label>
+        <ion-textarea type="text" formControlName="description" rows="4"></ion-textarea>
+      </ion-item>
+    </ion-list>
+  </form>
+</ion-content>
