@@ -1,13 +1,14 @@
 package de.simonlammes.issue;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "issues")
 public class Issue {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String title;
     private String description;
-
-    public Issue(String title, String description) {
-        this.title = title;
-        this.description = description;
-    }
 
     public String getTitle() {
         return title;
@@ -23,5 +24,13 @@ public class Issue {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
     }
 }
