@@ -14,6 +14,7 @@ import {environment} from '../environments/environment';
 import {NgxsModule} from '@ngxs/store';
 import {MyPostedIssuesState} from './cross-cutting/issue/my-posted-issues/my-posted-issues.state';
 import {KeycloakAngularModule, KeycloakService} from 'keycloak-angular';
+import {UserState} from './cross-cutting/user/user.state';
 
 @NgModule({
   declarations: [AppComponent],
@@ -33,7 +34,8 @@ import {KeycloakAngularModule, KeycloakService} from 'keycloak-angular';
       }
     }),
     NgxsModule.forRoot([
-      MyPostedIssuesState
+      MyPostedIssuesState,
+      UserState
     ], {
       developmentMode: !environment.production
     }),
@@ -54,7 +56,10 @@ import {KeycloakAngularModule, KeycloakService} from 'keycloak-angular';
             clientId: 'frontend',
           },
           initOptions: {
-            onLoad: 'login-required',
+            onLoad: 'check-sso',
+            // PKCE solves some security vulnerabilities.
+            // The use of PKCE should also be enforced in our backend in my opinion.
+            pkceMethod: 'S256',
             silentCheckSsoRedirectUri:
               window.location.origin + '/assets/silent-check-sso.html',
           },

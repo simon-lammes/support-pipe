@@ -1,9 +1,12 @@
 import {NgModule} from '@angular/core';
 import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
+import {AuthenticatedGuard} from './cross-cutting/authentication/authenticated.guard';
+import {UserPopulatedGuard} from './cross-cutting/user/user-populated.guard';
 
 const routes: Routes = [
   {
     path: 'home',
+    canActivate: [AuthenticatedGuard, UserPopulatedGuard],
     loadChildren: () => import('./pages/home/home.module').then(m => m.HomePageModule)
   },
   {
@@ -13,6 +16,7 @@ const routes: Routes = [
   },
   {
     path: 'save-issue',
+    canActivate: [AuthenticatedGuard, UserPopulatedGuard],
     loadChildren: () => import('./pages/save-issue/save-issue.module').then(m => m.SaveIssuePageModule)
   },
 ];
