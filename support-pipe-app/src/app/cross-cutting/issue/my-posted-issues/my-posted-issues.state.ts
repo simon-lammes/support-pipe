@@ -2,18 +2,22 @@ import {Action, Selector, State, StateContext} from '@ngxs/store';
 import {LoadPostedIssues, PostIssue} from './my-posted-issues.actions';
 import {Issue} from '../issue.model';
 import {IssueService} from '../issue.service';
-import {tap} from 'rxjs/operators';
+import {catchError, tap} from 'rxjs/operators';
 import {Injectable} from '@angular/core';
+import {Mutation} from '../../mutation.model';
+import * as _ from 'lodash';
 
 export interface MyPostedIssuesStateModel {
   issues: Issue[];
+  unresolvedMutations: Mutation<Issue>[];
 }
 
 @Injectable()
 @State<MyPostedIssuesStateModel>({
   name: 'myPostedIssues',
   defaults: {
-    issues: []
+    issues: [],
+    unresolvedMutations: []
   }
 })
 export class MyPostedIssuesState {
@@ -24,16 +28,45 @@ export class MyPostedIssuesState {
   }
 
   @Selector()
-  public static issues(state: MyPostedIssuesStateModel) {
-    return state.issues;
+  public static optimisticIssues(state: MyPostedIssuesStateModel) {
+    const clonedIssues = _.cloneDeep(state.issues);
+    state.unresolvedMutations.forEach(mutation => {
+      switch (mutation.type) {
+        case 'create':
+          clonedIssues.push(mutation.modifiedState);
+      }
+    });
+    return clonedIssues;
   }
 
   @Action(PostIssue)
   public add(ctx: StateContext<MyPostedIssuesStateModel>, { issue }: PostIssue) {
-    const stateModel = ctx.getState();
+    const timestampIso = new Date().toISOString();
+    const mutation: Mutation<Issue> = {
+      timestampIso,
+      type: 'create',
+      originalState: null,
+      modifiedState: issue
+    };
     ctx.patchState({
-      issues: [...stateModel.issues, issue]
+      unresolvedMutations: [...ctx.getState().unresolvedMutations, mutation]
     });
+    return this.issueService.postIssue(issue).pipe(
+      tap(result => {
+        ctx.patchState({
+          issues: [...ctx.getState().issues, result],
+          unresolvedMutations: ctx.getState().unresolvedMutations
+            .filter(mut => mut.timestampIso !== timestampIso)
+        });
+      }),
+      catchError((err, caught) => {
+        ctx.patchState({
+          unresolvedMutations: ctx.getState().unresolvedMutations
+            .filter(mut => mut.timestampIso !== timestampIso)
+        });
+        return caught;
+      })
+    );
   }
 
   @Action(LoadPostedIssues)

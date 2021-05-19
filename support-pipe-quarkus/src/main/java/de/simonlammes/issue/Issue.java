@@ -1,5 +1,7 @@
 package de.simonlammes.issue;
 
+import de.simonlammes.user.User;
+
 import javax.persistence.*;
 
 @Entity
@@ -9,6 +11,16 @@ public class Issue {
     private Long id;
     private String title;
     private String description;
+    @Column(name = "creator_id")
+    private int creatorId;
+
+    public int getCreatorId() {
+        return creatorId;
+    }
+
+    public void setCreatorId(int creatorId) {
+        this.creatorId = creatorId;
+    }
 
     public String getTitle() {
         return title;

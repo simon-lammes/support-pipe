@@ -3,6 +3,7 @@ import {FormBuilder, FormGroup} from '@angular/forms';
 import {Store} from '@ngxs/store';
 import {PostIssue} from '../../cross-cutting/issue/my-posted-issues/my-posted-issues.actions';
 import {Router} from '@angular/router';
+import {UserState} from '../../cross-cutting/user/user.state';
 
 @Component({
   selector: 'app-save-issue',
@@ -26,7 +27,10 @@ export class SaveIssuePage implements OnInit {
   }
 
   async submitIssueForm() {
-    await this.store.dispatch(new PostIssue(this.issueForm.value)).toPromise();
+    this.store.dispatch(new PostIssue({
+      ...this.issueForm.value,
+      creatorId: this.store.selectSnapshot(UserState.myUser).id
+    }));
     await this.router.navigateByUrl('/home');
   }
 }
