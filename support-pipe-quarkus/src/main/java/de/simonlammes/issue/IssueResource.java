@@ -5,6 +5,7 @@ import io.quarkus.security.Authenticated;
 import io.smallrye.mutiny.Uni;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.Claims;
+import org.jboss.resteasy.reactive.RestQuery;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -31,8 +32,8 @@ public class IssueResource {
 
     @GET
     @Authenticated
-    public Uni<List<Issue>> get() {
-        return issueRepository.listAll();
+    public Uni<List<Issue>> get(@RestQuery() List<Integer> includedCreatorIds, @RestQuery() List<Integer> excludedCreatorIds) {
+        return issueRepository.filterIssues(includedCreatorIds, excludedCreatorIds);
     }
 
     @POST

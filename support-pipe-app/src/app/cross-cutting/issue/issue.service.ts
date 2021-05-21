@@ -3,6 +3,8 @@ import {HttpClient} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
 import {Issue} from './issue.model';
 import {Observable} from 'rxjs';
+import {Store} from '@ngxs/store';
+import {UserState} from '../user/user.state';
 
 @Injectable({
   providedIn: 'root'
@@ -10,11 +12,17 @@ import {Observable} from 'rxjs';
 export class IssueService {
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private store: Store
   ) { }
 
   getMyPostedIssues(): Observable<Issue[]> {
-    return this.http.get<Issue[]>(environment.quarkusBaseUrl + '/issues');
+    const userId = this.store.selectSnapshot(UserState.myUser)?.id;
+    return this.http.get<Issue[]>(environment.quarkusBaseUrl + '/issues', {
+      params: {
+        includedCreatorIds: [userId.toString()]
+      }
+    });
   }
 
   postIssue(issue: Issue): Observable<Issue> {
