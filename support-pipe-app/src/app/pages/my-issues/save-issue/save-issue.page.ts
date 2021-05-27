@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {Store} from '@ngxs/store';
-import {PostIssue} from '../../cross-cutting/issue/my-posted-issues/my-posted-issues.actions';
+import {PostIssue} from '../../../cross-cutting/issue/my-posted-issues/my-posted-issues.actions';
 import {Router} from '@angular/router';
-import {UserState} from '../../cross-cutting/user/user.state';
+import {UserState} from '../../../cross-cutting/user/user.state';
 
 @Component({
   selector: 'app-save-issue',

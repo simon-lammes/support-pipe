@@ -9,7 +9,7 @@
 <ion-content>
   <app-issue *ngFor="let issue of myPostedIssues$ | async; trackBy: trackByIssue" [issue]="issue"></app-issue>
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-    <ion-fab-button [routerLink]="['/', 'save-issue']">
+    <ion-fab-button [routerLink]="['save-issue']">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>

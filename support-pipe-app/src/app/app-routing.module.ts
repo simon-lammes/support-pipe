@@ -5,23 +5,13 @@ import {UserPopulatedGuard} from './cross-cutting/user/user-populated.guard';
 
 const routes: Routes = [
   {
-    path: 'home',
+    path: 'tabs',
     canActivate: [AuthenticatedGuard, UserPopulatedGuard],
-    loadChildren: () => import('./pages/home/home.module').then(m => m.HomePageModule)
-  },
-  {
-    path: 'issue-feed',
-    canActivate: [AuthenticatedGuard, UserPopulatedGuard],
-    loadChildren: () => import('./pages/issue-feed/issue-feed.module').then( m => m.IssueFeedPageModule)
-  },
-  {
-    path: 'save-issue',
-    canActivate: [AuthenticatedGuard, UserPopulatedGuard],
-    loadChildren: () => import('./pages/save-issue/save-issue.module').then(m => m.SaveIssuePageModule)
+    loadChildren: () => import('./pages/tabs/tabs.module').then( m => m.TabsPageModule)
   },
   {
     path: '**',
-    redirectTo: 'home',
+    redirectTo: 'tabs',
     pathMatch: 'full'
   }
 ];

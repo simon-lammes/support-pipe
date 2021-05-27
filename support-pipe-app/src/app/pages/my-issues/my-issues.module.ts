@@ -2,9 +2,9 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {IonicModule} from '@ionic/angular';
 import {FormsModule} from '@angular/forms';
-import {HomePage} from './home.page';
+import {MyIssuesPage} from './my-issues.page';
 
-import {HomePageRoutingModule} from './home-routing.module';
+import {MyIssuesPageRoutingModule} from './my-issues-routing.module';
 import {IssueModule} from '../../components/issue/issue.module';
 
 
@@ -13,9 +13,9 @@ import {IssueModule} from '../../components/issue/issue.module';
     CommonModule,
     FormsModule,
     IonicModule,
-    HomePageRoutingModule,
+    MyIssuesPageRoutingModule,
     IssueModule
   ],
-  declarations: [HomePage]
+  declarations: [MyIssuesPage]
 })
-export class HomePageModule {}
+export class MyIssuesPageModule {}

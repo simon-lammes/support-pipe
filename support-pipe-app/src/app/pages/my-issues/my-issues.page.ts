@@ -6,11 +6,11 @@ import {Issue} from '../../cross-cutting/issue/issue.model';
 import {LoadPostedIssues} from '../../cross-cutting/issue/my-posted-issues/my-posted-issues.actions';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss'],
+  selector: 'app-my-issues',
+  templateUrl: 'my-issues.page.html',
+  styleUrls: ['my-issues.page.scss'],
 })
-export class HomePage implements OnInit {
+export class MyIssuesPage implements OnInit {
 
   @Select(MyPostedIssuesState.optimisticIssues) myPostedIssues$: Observable<Issue[]>;
 
