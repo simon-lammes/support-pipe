@@ -28,4 +28,12 @@ export class IssueService {
   postIssue(issue: Issue): Observable<Issue> {
     return this.http.post<Issue>(environment.quarkusBaseUrl + '/issues', issue);
   }
+
+  getIssueProposal(excludedIssueIds: number[] = []) {
+    return this.http.get<Issue>(environment.quarkusBaseUrl + '/issues/proposal', {
+      params: {
+        excludedIssueIds: excludedIssueIds.map(x => x.toString())
+      }
+    });
+  }
 }

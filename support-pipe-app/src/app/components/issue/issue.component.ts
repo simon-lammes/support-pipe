@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Issue} from '../../cross-cutting/issue/issue.model';
 
 @Component({
@@ -8,4 +8,14 @@ import {Issue} from '../../cross-cutting/issue/issue.model';
 })
 export class IssueComponent {
   @Input() issue: Issue;
+
+  /**
+   * Whether this issue is a proposal for the user to help fixing.
+   */
+  @Input() isProposal = false;
+  @Output() issueRejected = new EventEmitter<boolean>();
+
+  rejectIssue() {
+    this.issueRejected.emit(true);
+  }
 }

@@ -32,8 +32,16 @@ public class IssueResource {
 
     @GET
     @Authenticated
-    public Uni<List<Issue>> get(@RestQuery() List<Integer> includedCreatorIds, @RestQuery() List<Integer> excludedCreatorIds) {
+    public Uni<List<Issue>> get(@RestQuery() List<Long> includedCreatorIds, @RestQuery() List<Long> excludedCreatorIds) {
         return issueRepository.filterIssues(includedCreatorIds, excludedCreatorIds);
+    }
+
+    @GET
+    @Path("/proposal")
+    @Authenticated
+    public Uni<Issue> getProposal(@RestQuery() List<Long> excludedIssueIds) {
+        return userRepository.findBySubjectClaim(subjectClaim)
+                .chain(user -> issueRepository.findProposal(user.getId(), excludedIssueIds));
     }
 
     @POST

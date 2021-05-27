@@ -1,0 +1,9 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Issue Feed</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <app-issue *ngIf="proposal$ | async as proposal" [issue]="proposal" [isProposal]="true" (issueRejected)="onProposalRejected(proposal)"></app-issue>
+</ion-content>

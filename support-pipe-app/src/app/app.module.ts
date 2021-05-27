@@ -15,6 +15,7 @@ import {NgxsModule} from '@ngxs/store';
 import {MyPostedIssuesState} from './cross-cutting/issue/my-posted-issues/my-posted-issues.state';
 import {KeycloakAngularModule, KeycloakService} from 'keycloak-angular';
 import {UserState} from './cross-cutting/user/user.state';
+import {IssueFeedState} from './pages/issue-feed/issue-feed.state';
 
 @NgModule({
   declarations: [AppComponent],
@@ -35,7 +36,8 @@ import {UserState} from './cross-cutting/user/user.state';
     }),
     NgxsModule.forRoot([
       MyPostedIssuesState,
-      UserState
+      UserState,
+      IssueFeedState
     ], {
       developmentMode: !environment.production
     }),
@@ -48,8 +50,7 @@ import {UserState} from './cross-cutting/user/user.state';
     },
     {
       provide: APP_INITIALIZER,
-      useFactory: (keycloak: KeycloakService) => {
-        return () => keycloak.init({
+      useFactory: (keycloak: KeycloakService) => () => keycloak.init({
           config: {
             url: 'http://localhost:8080/auth',
             realm: 'support-pipe',
@@ -63,8 +64,7 @@ import {UserState} from './cross-cutting/user/user.state';
             silentCheckSsoRedirectUri:
               window.location.origin + '/assets/silent-check-sso.html',
           },
-        });
-      },
+        }),
       multi: true,
       deps: [KeycloakService],
     }

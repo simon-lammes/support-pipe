@@ -10,15 +10,20 @@ const routes: Routes = [
     loadChildren: () => import('./pages/home/home.module').then(m => m.HomePageModule)
   },
   {
-    path: '',
-    redirectTo: 'home',
-    pathMatch: 'full'
+    path: 'issue-feed',
+    canActivate: [AuthenticatedGuard, UserPopulatedGuard],
+    loadChildren: () => import('./pages/issue-feed/issue-feed.module').then( m => m.IssueFeedPageModule)
   },
   {
     path: 'save-issue',
     canActivate: [AuthenticatedGuard, UserPopulatedGuard],
     loadChildren: () => import('./pages/save-issue/save-issue.module').then(m => m.SaveIssuePageModule)
   },
+  {
+    path: '**',
+    redirectTo: 'home',
+    pathMatch: 'full'
+  }
 ];
 
 @NgModule({

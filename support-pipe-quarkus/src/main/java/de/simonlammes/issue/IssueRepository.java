@@ -13,7 +13,7 @@ import java.util.Map;
 @ApplicationScoped
 public class IssueRepository implements PanacheRepository<Issue> {
 
-    public Uni<List<Issue>> filterIssues(List<Integer> includedCreatorIds, List<Integer> excludedCreatorIds) {
+    public Uni<List<Issue>> filterIssues(List<Long> includedCreatorIds, List<Long> excludedCreatorIds) {
         // This nesting looks horrible but I found no good alternative because
         // I could not use the Hibernate Criteria API or something similar.
         if (includedCreatorIds.size() > 0 && excludedCreatorIds.size() > 0) {
@@ -27,5 +27,15 @@ public class IssueRepository implements PanacheRepository<Issue> {
         } else {
             return findAll().list();
         }
+    }
+
+    public Uni<Issue> findProposal(long excludedCreatorId, List<Long> excludedIssueIds) {
+        if (excludedIssueIds.isEmpty()) {
+            return find("creatorId != :excludedCreatorId", Parameters
+                    .with("excludedCreatorId", excludedCreatorId)).firstResult();
+        }
+        return find("creatorId != :excludedCreatorId and id not in :excludedIssueIds", Parameters
+                .with("excludedCreatorId", excludedCreatorId)
+                .and("excludedIssueIds", excludedIssueIds)).firstResult();
     }
 }

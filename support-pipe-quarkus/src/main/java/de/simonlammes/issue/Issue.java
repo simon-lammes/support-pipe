@@ -12,13 +12,13 @@ public class Issue {
     private String title;
     private String description;
     @Column(name = "creator_id")
-    private int creatorId;
+    private long creatorId;
 
-    public int getCreatorId() {
+    public long getCreatorId() {
         return creatorId;
     }
 
-    public void setCreatorId(int creatorId) {
+    public void setCreatorId(long creatorId) {
         this.creatorId = creatorId;
     }
 

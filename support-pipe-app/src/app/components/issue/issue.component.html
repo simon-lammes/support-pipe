@@ -4,6 +4,14 @@
   </ion-card-header>
 
   <ion-card-content>
-    {{ issue.description }}
+    <span>{{ issue.description }}</span>
+    <ion-buttons *ngIf="isProposal">
+      <ion-button color="danger" (click)="rejectIssue()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+      <ion-button color="success">
+        <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-card-content>
 </ion-card>
