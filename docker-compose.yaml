@@ -1,5 +1,13 @@
 version: '3'
 
+volumes:
+  keycloak_data:
+      driver: local
+
+networks:
+  keycloak_database_network:
+    driver: bridge
+
 services:
   postgres:
     image: postgres
@@ -9,12 +17,33 @@ services:
       POSTGRES_DB: support-pipe
     ports:
       - 5433:5432
+  keycloak_database:
+    image: postgres
+    volumes:
+      - keycloak_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+    networks:
+      - keycloak_database_network
   keycloak:
-      build: ./support-pipe-keycloak
-      environment:
-        KEYCLOAK_USER: admin
-        KEYCLOAK_PASSWORD: admin
-        # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
-        #JDBC_PARAMS: "ssl=true"
-      ports:
-        - 8080:8080
+    depends_on:
+      - keycloak_database
+    image: jboss/keycloak:13.0.1
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      DB_VENDOR: postgres
+      DB_ADDR: keycloak_database
+      DB_USER: keycloak
+      DB_PASSWORD: password
+      KEYCLOAK_IMPORT: /tmp/support-pipe-realm.json
+      # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
+      # JDBC_PARAMS: "ssl=true"
+    volumes:
+      - ./support-pipe-keycloak/support-pipe-realm.json:/tmp/support-pipe-realm.json
+    ports:
+      - 8080:8080
+    networks:
+      - keycloak_database_network
