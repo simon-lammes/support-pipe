@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Issue} from '../issue/issue.model';
 import {environment} from '../../../environments/environment';
@@ -15,5 +15,9 @@ export class UserService {
 
   putMe() {
     return this.http.put<User>(environment.quarkusBaseUrl + '/users/me', undefined);
+  }
+
+  tackleIssue(issue: Issue) {
+    return this.http.put<User>(`${environment.quarkusBaseUrl}/users/tackleIssue/${issue.id}`, {});
   }
 }

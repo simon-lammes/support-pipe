@@ -1,0 +1,9 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Tackle Issue</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <app-issue *ngIf="tackledIssue$ | async as issue" [issue]="issue"></app-issue>
+</ion-content>

@@ -36,4 +36,8 @@ export class IssueService {
       }
     });
   }
+
+  getIssueById(issueId: number) {
+    return this.http.get<Issue>(environment.quarkusBaseUrl + `/issues/${issueId}`, );
+  }
 }

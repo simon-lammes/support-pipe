@@ -1,9 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {Select, Store} from '@ngxs/store';
-import {LoadProposalAction, RejectProposalAction} from './issue-feed.actions';
-import {IssueFeedState} from './issue-feed.state';
 import {Observable} from 'rxjs';
 import {Issue} from '../../cross-cutting/issue/issue.model';
+import {Router} from '@angular/router';
+import {TackleProposalAction} from '../../cross-cutting/user/user.actions';
+import {IssueState} from '../../cross-cutting/issue/issue.state';
+import {LoadProposalAction, RejectProposalAction} from '../../cross-cutting/issue/issue.actions';
 
 @Component({
   selector: 'app-issue-feed',
@@ -12,10 +14,11 @@ import {Issue} from '../../cross-cutting/issue/issue.model';
 })
 export class IssueFeedPage implements OnInit {
 
-  @Select(IssueFeedState.getProposal) proposal$: Observable<Issue>;
+  @Select(IssueState.getProposal) proposal$: Observable<Issue>;
 
   constructor(
-    private store: Store
+    private store: Store,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -25,5 +28,10 @@ export class IssueFeedPage implements OnInit {
   async onProposalRejected(issue: Issue) {
     await this.store.dispatch(new RejectProposalAction(issue)).toPromise();
     this.store.dispatch(new LoadProposalAction());
+  }
+
+  async onProposalTackled(proposal: Issue) {
+    await this.store.dispatch(new TackleProposalAction(proposal)).toPromise();
+    await this.router.navigate(['tackle-issue']);
   }
 }

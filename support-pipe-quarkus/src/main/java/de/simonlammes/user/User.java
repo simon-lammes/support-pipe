@@ -12,6 +12,17 @@ public class User {
     @Column(name = "subject_claim")
     private String subjectClaim;
 
+    @Column(name = "currently_tackled_issue_id")
+    private Long currentlyTackledIssueId;
+
+    public Long getCurrentlyTackledIssueId() {
+        return currentlyTackledIssueId;
+    }
+
+    public void setCurrentlyTackledIssueId(Long currentlyTackledIssueId) {
+        this.currentlyTackledIssueId = currentlyTackledIssueId;
+    }
+
     public Long getId() {
         return id;
     }

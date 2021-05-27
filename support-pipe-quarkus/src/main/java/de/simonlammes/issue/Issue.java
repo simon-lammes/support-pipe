@@ -14,6 +14,17 @@ public class Issue {
     @Column(name = "creator_id")
     private long creatorId;
 
+    @Column(name = "does_require_help")
+    private boolean doesRequireHelp;
+
+    public boolean isDoesRequireHelp() {
+        return doesRequireHelp;
+    }
+
+    public void setDoesRequireHelp(boolean doesRequireHelp) {
+        this.doesRequireHelp = doesRequireHelp;
+    }
+
     public long getCreatorId() {
         return creatorId;
     }

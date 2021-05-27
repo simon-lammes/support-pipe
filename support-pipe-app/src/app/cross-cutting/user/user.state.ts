@@ -1,5 +1,5 @@
-import { State, Action, Selector, StateContext } from '@ngxs/store';
-import {PopulateMyUser} from './user.actions';
+import {Action, Selector, State, StateContext} from '@ngxs/store';
+import {PopulateMyUser, TackleProposalAction} from './user.actions';
 import {UserService} from './user.service';
 import {tap} from 'rxjs/operators';
 import {User} from './user.model';
@@ -30,12 +30,26 @@ export class UserState {
 
   @Action(PopulateMyUser)
   public populateMyUser(ctx: StateContext<UserStateModel>) {
+    if (ctx.getState().myUser) {
+      return;
+    }
     return this.userService.putMe().pipe(
       tap(user => {
         ctx.patchState({
           myUser: user
         });
       }),
+    );
+  }
+
+  @Action(TackleProposalAction)
+  public tackleProposal(ctx: StateContext<UserStateModel>, {proposal}: TackleProposalAction) {
+    return this.userService.tackleIssue(proposal).pipe(
+      tap((user) => {
+        ctx.patchState({
+          myUser: user
+        });
+      })
     );
   }
 }

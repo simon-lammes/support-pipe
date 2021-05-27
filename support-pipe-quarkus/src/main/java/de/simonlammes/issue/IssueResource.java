@@ -1,6 +1,8 @@
 package de.simonlammes.issue;
 
+import de.simonlammes.user.User;
 import de.simonlammes.user.UserRepository;
+import io.quarkus.hibernate.reactive.panache.Panache;
 import io.quarkus.security.Authenticated;
 import io.smallrye.mutiny.Uni;
 import org.eclipse.microprofile.jwt.Claim;
@@ -9,9 +11,10 @@ import org.jboss.resteasy.reactive.RestQuery;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.persistence.LockModeType;
+import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.time.Duration;
 import java.util.List;
 
 @Path("/issues")
@@ -34,6 +37,13 @@ public class IssueResource {
     @Authenticated
     public Uni<List<Issue>> get(@RestQuery() List<Long> includedCreatorIds, @RestQuery() List<Long> excludedCreatorIds) {
         return issueRepository.filterIssues(includedCreatorIds, excludedCreatorIds);
+    }
+
+    @GET
+    @Path("/{issueId}")
+    @Authenticated
+    public Uni<Issue> getById(@PathParam("issueId") Long issueId) {
+        return issueRepository.findById(issueId);
     }
 
     @GET
