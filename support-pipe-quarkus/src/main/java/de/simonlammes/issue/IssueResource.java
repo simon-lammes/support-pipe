@@ -1,6 +1,5 @@
 package de.simonlammes.issue;
 
-import de.simonlammes.user.User;
 import de.simonlammes.user.UserRepository;
 import io.quarkus.hibernate.reactive.panache.Panache;
 import io.quarkus.security.Authenticated;
@@ -12,7 +11,6 @@ import org.jboss.resteasy.reactive.RestQuery;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.LockModeType;
-import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
@@ -57,11 +55,20 @@ public class IssueResource {
     @POST
     @Authenticated
     public Uni<Issue> post(Issue issue) {
-        return userRepository.findBySubjectClaim(subjectClaim).invoke(user -> {
-            if (user.getId() != issue.getCreatorId()) {
-                throw new ForbiddenException("The creator id does not match the id of the user issuing the request.");
-            }
-        }).chain(() -> issueRepository.persistAndFlush(issue))
-                .replaceWith(issue);
+        return Panache.withTransaction(() ->
+                userRepository.findBySubjectClaim(subjectClaim, LockModeType.PESSIMISTIC_READ).invoke(user -> {
+                    if (user.getId() != issue.getCreatorId()) {
+                        throw new ForbiddenException("The creator id does not match the id of the user issuing the request.");
+                    }
+                    if (user.getCurrentlySupportedIssueId() != null || user.getCurrentlyExhibitedIssueId() != null) {
+                        throw new ForbiddenException("This user is already supporting or exhibiting another issue.");
+                    }
+                }).onItem().call(user ->
+                        issueRepository.persistAndFlush(issue)
+                ).onItem().call(user -> {
+                    user.setCurrentlyExhibitedIssueId(issue.getId());
+                    return userRepository.persist(user);
+                })
+        ).replaceWith(issue);
     }
 }

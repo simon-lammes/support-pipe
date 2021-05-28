@@ -14,13 +14,13 @@ export class IssueComponent {
    */
   @Input() isProposal = false;
   @Output() issueRejected = new EventEmitter<boolean>();
-  @Output() issueTackled = new EventEmitter<boolean>();
+  @Output() issueSupported = new EventEmitter<boolean>();
 
   rejectIssue() {
     this.issueRejected.emit(true);
   }
 
-  tackleIssue() {
-    this.issueTackled.emit(true);
+  supportIssue() {
+    this.issueSupported.emit(true);
   }
 }

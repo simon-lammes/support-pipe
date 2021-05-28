@@ -17,7 +17,7 @@ export class UserService {
     return this.http.put<User>(environment.quarkusBaseUrl + '/users/me', undefined);
   }
 
-  tackleIssue(issue: Issue) {
-    return this.http.put<User>(`${environment.quarkusBaseUrl}/users/tackleIssue/${issue.id}`, {});
+  supportIssue(issue: Issue) {
+    return this.http.put<User>(`${environment.quarkusBaseUrl}/users/supportIssue/${issue.id}`, {});
   }
 }

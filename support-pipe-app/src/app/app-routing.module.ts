@@ -2,19 +2,31 @@ import {NgModule} from '@angular/core';
 import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 import {AuthenticatedGuard} from './cross-cutting/authentication/authenticated.guard';
 import {UserPopulatedGuard} from './cross-cutting/user/user-populated.guard';
-import {HasIssueToTackleGuard} from './pages/tackle-issue/has-issue-to-tackle.guard';
-import {HasNoIssueToTackleGuard} from './pages/tackle-issue/has-no-issue-to-tackle.guard';
+import {HasIssueToSupportGuard} from './pages/support-issue/has-issue-to-support.guard';
+import {HasNoIssueToSupportGuard} from './pages/support-issue/has-no-issue-to-support.guard';
+import {HasIssueExhibitedGuard} from './pages/receive-support/has-issue-exhibited.guard';
+import {HasNoIssueExhibitedGuard} from './pages/receive-support/has-no-issue-exhibited.guard';
 
 const routes: Routes = [
   {
     path: 'tabs',
-    canActivate: [AuthenticatedGuard, UserPopulatedGuard, HasNoIssueToTackleGuard],
+    canActivate: [
+      AuthenticatedGuard,
+      UserPopulatedGuard,
+      HasNoIssueToSupportGuard,
+      HasNoIssueExhibitedGuard
+    ],
     loadChildren: () => import('./pages/tabs/tabs.module').then( m => m.TabsPageModule)
   },
   {
-    path: 'tackle-issue',
-    canActivate: [HasIssueToTackleGuard],
-    loadChildren: () => import('./pages/tackle-issue/tackle-issue.module').then(m => m.TackleIssuePageModule)
+    path: 'support-issue',
+    canActivate: [HasIssueToSupportGuard],
+    loadChildren: () => import('./pages/support-issue/support-issue.module').then(m => m.SupportIssuePageModule)
+  },
+  {
+    path: 'receive-support',
+    canActivate: [HasIssueExhibitedGuard],
+    loadChildren: () => import('./pages/receive-support/receive-support.module').then( m => m.ReceiveSupportPageModule)
   },
   {
     path: '**',

@@ -44,7 +44,7 @@ public class UserResource {
     }
 
     @PUT
-    @Path("tackleIssue/{issueId}")
+    @Path("supportIssue/{issueId}")
     @Authenticated
     public Uni<User> tackleIssue(@PathParam("issueId") Long issueId) {
         return Panache.withTransaction(() -> Uni.combine().all().unis(
@@ -53,10 +53,10 @@ public class UserResource {
         ).asTuple().chain(objects -> {
             User user = objects.getItem1();
             Issue issue = objects.getItem2();
-            if (user.getCurrentlyTackledIssueId() != null) {
-                throw new ForbiddenException("This user is already tackling another issue.");
+            if (user.getCurrentlySupportedIssueId() != null || user.getCurrentlyExhibitedIssueId() != null) {
+                throw new ForbiddenException("This user is already supporting or exhibiting another issue.");
             }
-            user.setCurrentlyTackledIssueId(issueId);
+            user.setCurrentlySupportedIssueId(issueId);
             issue.setDoesRequireHelp(false);
             return userRepository.persist(user)
                     .replaceWith(issueRepository.persist(issue))

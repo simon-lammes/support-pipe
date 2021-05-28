@@ -1,0 +1,9 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Support Issue</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <app-issue *ngIf="supportedIssue$ | async as issue" [issue]="issue"></app-issue>
+</ion-content>

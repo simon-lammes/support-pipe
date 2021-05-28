@@ -4,9 +4,9 @@ import {FormsModule} from '@angular/forms';
 
 import {IonicModule} from '@ionic/angular';
 
-import {TackleIssuePageRoutingModule} from './tackle-issue-routing.module';
+import {ReceiveSupportPageRoutingModule} from './receive-support-routing.module';
 
-import {TackleIssuePage} from './tackle-issue.page';
+import {ReceiveSupportPage} from './receive-support.page';
 import {IssueModule} from '../../components/issue/issue.module';
 
 @NgModule({
@@ -14,9 +14,9 @@ import {IssueModule} from '../../components/issue/issue.module';
     CommonModule,
     FormsModule,
     IonicModule,
-    TackleIssuePageRoutingModule,
+    ReceiveSupportPageRoutingModule,
     IssueModule
   ],
-  declarations: [TackleIssuePage]
+  declarations: [ReceiveSupportPage]
 })
-export class TackleIssuePageModule {}
+export class ReceiveSupportPageModule {}

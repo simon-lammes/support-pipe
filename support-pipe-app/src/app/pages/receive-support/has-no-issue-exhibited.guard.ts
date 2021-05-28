@@ -1,14 +1,15 @@
 import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
+import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree} from '@angular/router';
+import {Observable} from 'rxjs';
 import {Store} from '@ngxs/store';
-import {UserState} from '../../cross-cutting/user/user.state';
 import {PopulateMyUser} from '../../cross-cutting/user/user.actions';
 import {map, switchMap} from 'rxjs/operators';
+import {UserState} from '../../cross-cutting/user/user.state';
 
 @Injectable({
   providedIn: 'root'
 })
-export class HasIssueToTackleGuard implements CanActivate {
+export class HasNoIssueExhibitedGuard implements CanActivate {
 
   constructor(
     private store: Store,
@@ -16,15 +17,15 @@ export class HasIssueToTackleGuard implements CanActivate {
   ) {
   }
 
-  async canActivate(
+  canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
-  ): Promise<boolean> {
+  ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     return this.store.dispatch(PopulateMyUser).pipe(
-      map(() => !!this.store.selectSnapshot(UserState.myUser).currentlyTackledIssueId),
+      map(() => !this.store.selectSnapshot(UserState.myUser).currentlyExhibitedIssueId),
       switchMap(async (allowed) => {
         if (!allowed) {
-          await this.router.navigateByUrl('/tabs/issue-feed');
+          await this.router.navigateByUrl('/receive-support');
         }
         return allowed;
       })

@@ -1,5 +1,6 @@
 export interface User {
   id: number;
   subjectClaim: string;
-  currentlyTackledIssueId: number;
+  currentlySupportedIssueId: number;
+  currentlyExhibitedIssueId: number;
 }

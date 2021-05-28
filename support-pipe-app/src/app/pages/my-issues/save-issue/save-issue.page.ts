@@ -27,10 +27,11 @@ export class SaveIssuePage implements OnInit {
   }
 
   async submitIssueForm() {
-    this.store.dispatch(new PostIssue({
+    await this.store.dispatch(new PostIssue({
       ...this.issueForm.value,
+      doesRequireHelp: true,
       creatorId: this.store.selectSnapshot(UserState.myUser).id
     }));
-    await this.router.navigateByUrl('/home');
+    await this.router.navigateByUrl('/receive-support');
   }
 }

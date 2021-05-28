@@ -7,5 +7,5 @@
 <ion-content>
   <app-issue *ngIf="proposal$ | async as proposal" [issue]="proposal" [isProposal]="true"
              (issueRejected)="onProposalRejected(proposal)"
-             (issueTackled)="onProposalTackled(proposal)"></app-issue>
+             (issueSupported)="onProposalSupported(proposal)"></app-issue>
 </ion-content>

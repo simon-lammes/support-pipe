@@ -1,0 +1,13 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Receive Support</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <app-issue *ngIf="exhibitedIssue$ | async as issue" [issue]="issue"></app-issue>
+  <ion-chip style="margin-left: 10px" disabled>
+    <ion-icon name="heart" color="dark"></ion-icon>
+    <ion-label>Waiting for support...</ion-label>
+  </ion-chip>
+</ion-content>

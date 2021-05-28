@@ -9,26 +9,26 @@ import {switchMap} from 'rxjs/operators';
 import {LoadIssue} from '../../cross-cutting/issue/issue.actions';
 
 @Component({
-  selector: 'app-tackle-issue',
-  templateUrl: './tackle-issue.page.html',
-  styleUrls: ['./tackle-issue.page.scss'],
+  selector: 'app-support-issue',
+  templateUrl: './support-issue.page.html',
+  styleUrls: ['./support-issue.page.scss'],
 })
-export class TackleIssuePage {
+export class SupportIssuePage {
 
   @Select(UserState.myUser) user$: Observable<User>;
 
-  tackledIssue$: Observable<Issue>;
+  supportedIssue$: Observable<Issue>;
 
   constructor(
     private store: Store
   ) {
-    this.tackledIssue$ = this.user$.pipe(
+    this.supportedIssue$ = this.user$.pipe(
       switchMap(async user => {
-        await this.store.dispatch(new LoadIssue(user.currentlyTackledIssueId)).toPromise();
+        await this.store.dispatch(new LoadIssue(user.currentlySupportedIssueId)).toPromise();
         return user;
       }),
       switchMap(user => this.store.select(
-        IssueState.issueById(user.currentlyTackledIssueId)
+        IssueState.issueById(user.currentlySupportedIssueId)
       ))
     );
   }

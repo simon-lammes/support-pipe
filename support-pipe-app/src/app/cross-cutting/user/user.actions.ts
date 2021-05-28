@@ -5,7 +5,7 @@ export class PopulateMyUser {
   constructor() { }
 }
 
-export class TackleProposalAction {
-  public static readonly type = '[User] Tackle Proposal';
+export class SupportProposalAction {
+  public static readonly type = '[User] Support Proposal';
   constructor(public proposal: Issue) { }
 }

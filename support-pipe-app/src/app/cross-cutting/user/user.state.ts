@@ -1,11 +1,12 @@
 import {Action, Selector, State, StateContext} from '@ngxs/store';
-import {PopulateMyUser, TackleProposalAction} from './user.actions';
+import {PopulateMyUser, SupportProposalAction} from './user.actions';
 import {UserService} from './user.service';
-import {tap} from 'rxjs/operators';
+import {finalize, tap} from 'rxjs/operators';
 import {User} from './user.model';
 import {Injectable} from '@angular/core';
 
 export interface UserStateModel {
+  isWaitingForMyUser: boolean;
   myUser: User;
 }
 
@@ -13,6 +14,7 @@ export interface UserStateModel {
 @State<UserStateModel>({
   name: 'user',
   defaults: {
+    isWaitingForMyUser: false,
     myUser: undefined
   }
 })
@@ -30,21 +32,29 @@ export class UserState {
 
   @Action(PopulateMyUser)
   public populateMyUser(ctx: StateContext<UserStateModel>) {
-    if (ctx.getState().myUser) {
+    if (ctx.getState().isWaitingForMyUser) {
       return;
     }
+    ctx.patchState({
+      isWaitingForMyUser: true
+    });
     return this.userService.putMe().pipe(
       tap(user => {
         ctx.patchState({
           myUser: user
         });
       }),
+      finalize(() => {
+        ctx.patchState({
+          isWaitingForMyUser: false
+        });
+      })
     );
   }
 
-  @Action(TackleProposalAction)
-  public tackleProposal(ctx: StateContext<UserStateModel>, {proposal}: TackleProposalAction) {
-    return this.userService.tackleIssue(proposal).pipe(
+  @Action(SupportProposalAction)
+  public supportProposal(ctx: StateContext<UserStateModel>, {proposal}: SupportProposalAction) {
+    return this.userService.supportIssue(proposal).pipe(
       tap((user) => {
         ctx.patchState({
           myUser: user

@@ -12,15 +12,26 @@ public class User {
     @Column(name = "subject_claim")
     private String subjectClaim;
 
-    @Column(name = "currently_tackled_issue_id")
-    private Long currentlyTackledIssueId;
+    @Column(name = "currently_supported_issue_id")
+    private Long currentlySupportedIssueId;
 
-    public Long getCurrentlyTackledIssueId() {
-        return currentlyTackledIssueId;
+    @Column(name = "currently_exhibited_issue_id")
+    private Long currentlyExhibitedIssueId;
+
+    public Long getCurrentlyExhibitedIssueId() {
+        return currentlyExhibitedIssueId;
     }
 
-    public void setCurrentlyTackledIssueId(Long currentlyTackledIssueId) {
-        this.currentlyTackledIssueId = currentlyTackledIssueId;
+    public void setCurrentlyExhibitedIssueId(Long currentlyExhibitedIssue) {
+        this.currentlyExhibitedIssueId = currentlyExhibitedIssue;
+    }
+
+    public Long getCurrentlySupportedIssueId() {
+        return currentlySupportedIssueId;
+    }
+
+    public void setCurrentlySupportedIssueId(Long currentlyTackledIssueId) {
+        this.currentlySupportedIssueId = currentlyTackledIssueId;
     }
 
     public Long getId() {

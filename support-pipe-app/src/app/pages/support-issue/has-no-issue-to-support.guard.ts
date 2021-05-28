@@ -8,7 +8,7 @@ import {map, switchMap} from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
-export class HasNoIssueToTackleGuard implements CanActivate {
+export class HasNoIssueToSupportGuard implements CanActivate {
 
   constructor(
     private store: Store,
@@ -20,10 +20,10 @@ export class HasNoIssueToTackleGuard implements CanActivate {
     state: RouterStateSnapshot
   ): Promise<boolean> {
     return this.store.dispatch(PopulateMyUser).pipe(
-      map(() => !this.store.selectSnapshot(UserState.myUser).currentlyTackledIssueId),
+      map(() => !this.store.selectSnapshot(UserState.myUser).currentlySupportedIssueId),
       switchMap(async (allowed) => {
         if (!allowed) {
-          await this.router.navigateByUrl('/tackle-issue');
+          await this.router.navigateByUrl('/support-issue');
         }
         return allowed;
       })

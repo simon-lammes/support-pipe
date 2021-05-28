@@ -3,4 +3,5 @@ export interface Issue {
   creatorId: number;
   title: string;
   description: string;
+  doesRequireHelp: boolean;
 }
