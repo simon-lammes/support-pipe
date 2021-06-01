@@ -4,7 +4,7 @@ import {Observable} from 'rxjs';
 import {Store} from '@ngxs/store';
 import {UserState} from './user.state';
 import {PopulateMyUser} from './user.actions';
-import {map} from 'rxjs/operators';
+import {filter, first, map, switchMap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +21,10 @@ export class UserPopulatedGuard implements CanActivate {
     state: RouterStateSnapshot
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     return this.store.dispatch(PopulateMyUser).pipe(
-      map(() => !!this.store.selectSnapshot(UserState.myUser))
+      switchMap(() => this.store.select(UserState.state)),
+      filter(userState => !userState.isWaitingForMyUser),
+      first(),
+      map(userState => !!userState.myUser)
     );
   }
 }

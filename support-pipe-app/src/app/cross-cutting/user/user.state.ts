@@ -26,6 +26,12 @@ export class UserState {
   }
 
   @Selector()
+  public static state(state: UserStateModel) {
+    return state;
+  }
+
+
+  @Selector()
   public static myUser(state: UserStateModel) {
     return state.myUser;
   }
