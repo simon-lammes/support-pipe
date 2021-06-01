@@ -1,7 +1,7 @@
 import {Action, createSelector, Selector, State, StateContext} from '@ngxs/store';
 import {LoadIssue, LoadProposalAction, RejectProposalAction} from './issue.actions';
 import {IssueService} from './issue.service';
-import {tap} from 'rxjs/operators';
+import {catchError, tap} from 'rxjs/operators';
 import {Issue} from './issue.model';
 import {Injectable} from '@angular/core';
 import produce from 'immer';
@@ -11,6 +11,7 @@ export interface IssueStateModel {
     [issueId: number]: Issue;
   };
   proposalId: number;
+  proposalState: 'initial' | 'loading' | 'found' | 'noneFound' | 'error';
   rejectedProposalIds: number[];
 }
 
@@ -20,6 +21,7 @@ export interface IssueStateModel {
   defaults: {
     issues: {},
     proposalId: undefined,
+    proposalState: 'initial',
     rejectedProposalIds: []
   }
 })
@@ -68,11 +70,31 @@ export class IssueState {
   @Action(LoadProposalAction)
   public loadProposal(ctx: StateContext<IssueStateModel>) {
     const excludedIssueIds = ctx.getState().rejectedProposalIds;
+    ctx.patchState({
+      proposalState: 'loading'
+    });
     return this.issueService.getIssueProposal(excludedIssueIds).pipe(
-      tap(issue => ctx.setState(produce(draft => {
-        draft.issues[issue.id] = issue;
-        draft.proposalId = issue.id;
-      })))
+      tap(issue => {
+        if (!issue) {
+          return ctx.patchState({
+            proposalState: 'noneFound',
+            proposalId: undefined
+          });
+        }
+        ctx.setState(produce(draft => {
+          draft.issues[issue.id] = issue;
+          draft.proposalId = issue.id;
+          draft.proposalState = 'found';
+        }));
+      }),
+      catchError((err, caught) => {
+        console.error(err);
+        ctx.patchState({
+          proposalState: 'error',
+          proposalId: undefined
+        });
+        return caught;
+      })
     );
   }
 

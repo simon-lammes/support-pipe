@@ -4,7 +4,7 @@ import {Observable} from 'rxjs';
 import {Issue} from '../../cross-cutting/issue/issue.model';
 import {Router} from '@angular/router';
 import {SupportProposalAction} from '../../cross-cutting/user/user.actions';
-import {IssueState} from '../../cross-cutting/issue/issue.state';
+import {IssueState, IssueStateModel} from '../../cross-cutting/issue/issue.state';
 import {LoadProposalAction, RejectProposalAction} from '../../cross-cutting/issue/issue.actions';
 
 @Component({
@@ -15,6 +15,7 @@ import {LoadProposalAction, RejectProposalAction} from '../../cross-cutting/issu
 export class IssueFeedPage implements OnInit {
 
   @Select(IssueState.getProposal) proposal$: Observable<Issue>;
+  @Select(IssueState.getState) issueState$: Observable<IssueStateModel>;
 
   constructor(
     private store: Store,
