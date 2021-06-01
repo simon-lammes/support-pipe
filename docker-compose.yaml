@@ -2,7 +2,9 @@ version: '3'
 
 volumes:
   keycloak_data:
-      driver: local
+    driver: local
+  database_data:
+    driver: local
 
 networks:
   keycloak_database_network:
@@ -11,6 +13,8 @@ networks:
 services:
   postgres:
     image: postgres
+    volumes:
+      - database_data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
