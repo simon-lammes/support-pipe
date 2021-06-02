@@ -35,7 +35,7 @@ export class AppComponent {
       };
       window.setTimeout(() => {
         eventSource.close();
-      }, 5000);
+      }, 15000);
     });
   }
 }

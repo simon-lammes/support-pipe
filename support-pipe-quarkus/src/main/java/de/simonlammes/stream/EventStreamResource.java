@@ -2,7 +2,8 @@ package de.simonlammes.stream;
 
 import io.quarkus.security.Authenticated;
 import io.smallrye.mutiny.Multi;
-import io.vertx.mutiny.core.Vertx;
+import org.eclipse.microprofile.reactive.messaging.Channel;
+import org.reactivestreams.Publisher;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -10,13 +11,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.sse.OutboundSseEvent;
-import javax.ws.rs.sse.Sse;
-import javax.ws.rs.sse.SseEventSink;
-import java.util.HashMap;
-import java.util.Map;
 
 @Path("/event-stream")
 @RequestScoped
@@ -25,17 +20,13 @@ import java.util.Map;
 public class EventStreamResource {
 
     @Inject
-    Vertx vertx;
+    @Channel("support-events")
+    Publisher<SupportEvent> supportEvents;
 
     @GET
     @Authenticated
     @Path("/user-related-events")
-    public Multi<OutboundSseEvent> greeting(@Context Sse sse, @Context SseEventSink sseEventSink) {
-        return vertx.periodicStream(2000).toMulti().select().first(3)
-                .map(l -> {
-                    Map<String, String> map = new HashMap<>();
-                    map.put("hello", "world");
-                    return sse.newEventBuilder().name("my-own-event").data(map).build();
-                });
+    public Multi<SupportEvent> greeting() {
+        return Multi.createFrom().publisher(supportEvents).select().first(3);
     }
 }
