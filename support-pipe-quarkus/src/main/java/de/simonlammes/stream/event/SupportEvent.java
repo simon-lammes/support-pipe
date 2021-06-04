@@ -1,20 +1,22 @@
 package de.simonlammes.stream.event;
 
+import de.simonlammes.user.User;
+
 public class SupportEvent extends UserRelatedEvent {
-    private int value;
+    private User supporter;
 
     public SupportEvent() {
     }
 
-    public SupportEvent(int value) {
-        this.value = value;
+    public SupportEvent(User supporter) {
+        this.supporter = supporter;
     }
 
-    public int getValue() {
-        return value;
+    public User getSupporter() {
+        return supporter;
     }
 
-    public void setValue(int value) {
-        this.value = value;
+    public void setSupporter(User supporter) {
+        this.supporter = supporter;
     }
 }

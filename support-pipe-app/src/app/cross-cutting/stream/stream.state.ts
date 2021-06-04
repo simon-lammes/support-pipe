@@ -4,6 +4,7 @@ import {StreamService} from './stream.service';
 import {finalize} from 'rxjs/operators';
 import {HandleSupportEvent} from '../support/support.actions';
 import {Injectable} from '@angular/core';
+import {SupportEvent} from '../support/support-event';
 
 export interface StreamStateModel {
   isListeningToUserRelatedEvents: boolean;
@@ -42,7 +43,8 @@ export class StreamState {
     ).subscribe(event => {
       switch (event.type) {
         case 'SupportEvent':
-          this.store.dispatch(new HandleSupportEvent(event));
+          const supportEvent = event as SupportEvent;
+          this.store.dispatch(new HandleSupportEvent(supportEvent));
           break;
       }
     });
