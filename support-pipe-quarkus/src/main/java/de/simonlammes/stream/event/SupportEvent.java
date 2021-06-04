@@ -1,7 +1,10 @@
-package de.simonlammes.stream;
+package de.simonlammes.stream.event;
 
-public class SupportEvent {
+public class SupportEvent extends UserRelatedEvent {
     private int value;
+
+    public SupportEvent() {
+    }
 
     public SupportEvent(int value) {
         this.value = value;

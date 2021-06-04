@@ -1,5 +1,6 @@
 package de.simonlammes.stream;
 
+import de.simonlammes.stream.event.SupportEvent;
 import io.smallrye.mutiny.Multi;
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
 
@@ -18,7 +19,7 @@ public class SupportEventGenerator {
 
     @Outgoing("support-events-outgoing")
     public Multi<SupportEvent> generate() {
-        return Multi.createFrom().ticks().every(Duration.ofSeconds(5))
+        return Multi.createFrom().ticks().every(Duration.ofSeconds(100))
                 .onOverflow().drop()
                 .map(tick -> new SupportEvent(random.nextInt(100)));
     }
