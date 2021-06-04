@@ -8,6 +8,7 @@ import io.quarkus.security.Authenticated;
 import io.smallrye.mutiny.Uni;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.Claims;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 
@@ -33,6 +34,9 @@ public class UserResource {
     @Claim(standard = Claims.sub)
     String subjectClaim;
 
+    @Inject
+    JsonWebToken jwt;
+
     @Inject @Channel("support-events-outgoing")
     Emitter<SupportEvent> supportEventEmitter;
 
@@ -45,6 +49,8 @@ public class UserResource {
                 .continueWith(() -> {
                     User user = new User();
                     user.setSubjectClaim(subjectClaim);
+                    user.setGivenName(jwt.getClaim("given_name"));
+                    user.setFamilyName(jwt.getClaim("family_name"));
                     return user;
                 }).call(user -> userRepository.persistAndFlush(user));
     }

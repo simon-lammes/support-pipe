@@ -5,6 +5,7 @@ import io.smallrye.mutiny.Uni;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.LockModeType;
+import java.util.List;
 
 @ApplicationScoped
 public class UserRepository implements PanacheRepository<User> {
@@ -15,5 +16,9 @@ public class UserRepository implements PanacheRepository<User> {
 
     public Uni<User> findBySubjectClaim(String subjectClaim) {
         return findBySubjectClaim(subjectClaim, LockModeType.NONE);
+    }
+
+    public Uni<List<User>> findByCurrentlySupportedIssueId(Long issueId) {
+        return find("currently_supported_issue_id", issueId).list();
     }
 }

@@ -1,5 +1,6 @@
 package de.simonlammes.issue;
 
+import de.simonlammes.user.User;
 import de.simonlammes.user.UserRepository;
 import io.quarkus.hibernate.reactive.panache.Panache;
 import io.quarkus.security.Authenticated;
@@ -42,6 +43,13 @@ public class IssueResource {
     @Authenticated
     public Uni<Issue> getById(@PathParam("issueId") Long issueId) {
         return issueRepository.findById(issueId);
+    }
+
+    @GET
+    @Path("/{issueId}/supporters")
+    @Authenticated
+    public Uni<List<User>> getSupporters(@PathParam("issueId") Long issueId) {
+        return userRepository.findByCurrentlySupportedIssueId(issueId);
     }
 
     @GET
