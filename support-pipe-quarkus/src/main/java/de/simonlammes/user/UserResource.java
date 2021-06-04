@@ -2,11 +2,14 @@ package de.simonlammes.user;
 
 import de.simonlammes.issue.Issue;
 import de.simonlammes.issue.IssueRepository;
+import de.simonlammes.stream.event.SupportEvent;
 import io.quarkus.hibernate.reactive.panache.Panache;
 import io.quarkus.security.Authenticated;
 import io.smallrye.mutiny.Uni;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.Claims;
+import org.eclipse.microprofile.reactive.messaging.Channel;
+import org.eclipse.microprofile.reactive.messaging.Emitter;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -29,6 +32,9 @@ public class UserResource {
     @Inject
     @Claim(standard = Claims.sub)
     String subjectClaim;
+
+    @Inject @Channel("support-events-outgoing")
+    Emitter<SupportEvent> supportEventEmitter;
 
     @PUT
     @Path("/me")
@@ -61,6 +67,6 @@ public class UserResource {
             return userRepository.persist(user)
                     .replaceWith(issueRepository.persist(issue))
                     .replaceWith(user);
-        }));
+        })).call(user -> Uni.createFrom().completionStage(supportEventEmitter.send(new SupportEvent(user))));
     }
 }

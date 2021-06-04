@@ -5,6 +5,7 @@ import {Issue} from './issue.model';
 import {Observable} from 'rxjs';
 import {Store} from '@ngxs/store';
 import {UserState} from '../user/user.state';
+import {User} from '../user/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -39,5 +40,9 @@ export class IssueService {
 
   getIssueById(issueId: number) {
     return this.http.get<Issue>(environment.quarkusBaseUrl + `/issues/${issueId}`, );
+  }
+
+  getSupporters(issueId: number) {
+    return this.http.get<User[]>(`${environment.quarkusBaseUrl}/issues/${issueId}/supporters`);
   }
 }

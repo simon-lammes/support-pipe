@@ -16,6 +16,8 @@ import {MyPostedIssuesState} from './cross-cutting/issue/my-posted-issues/my-pos
 import {KeycloakAngularModule, KeycloakService} from 'keycloak-angular';
 import {UserState} from './cross-cutting/user/user.state';
 import {IssueState} from './cross-cutting/issue/issue.state';
+import {StreamState} from './cross-cutting/stream/stream.state';
+import {SupportState} from './cross-cutting/support/support.state';
 
 @NgModule({
   declarations: [AppComponent],
@@ -37,7 +39,9 @@ import {IssueState} from './cross-cutting/issue/issue.state';
     NgxsModule.forRoot([
       MyPostedIssuesState,
       UserState,
-      IssueState
+      IssueState,
+      StreamState,
+      SupportState
     ], {
       developmentMode: !environment.production
     }),

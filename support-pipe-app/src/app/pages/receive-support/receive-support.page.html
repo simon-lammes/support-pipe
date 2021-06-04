@@ -6,8 +6,21 @@
 
 <ion-content>
   <app-issue *ngIf="exhibitedIssue$ | async as issue" [issue]="issue"></app-issue>
-  <ion-chip style="margin-left: 10px" disabled>
-    <ion-icon name="heart" color="dark"></ion-icon>
-    <ion-label>Waiting for support...</ion-label>
-  </ion-chip>
+  <ng-container *ngIf="supportState$ | async as supportState">
+    <!-- waiting for user -->
+    <ng-container *ngIf="!supportState.supporters.length > 0">
+      <ion-list-header>
+        <ion-label>
+          Waiting for Supporter...
+        </ion-label>
+      </ion-list-header>
+      <ion-progress-bar value="0.45" buffer="0.9"></ion-progress-bar>
+    </ng-container>
+
+    <!-- List of Supporters -->
+    <ion-chip style="margin-left: 10px" disabled *ngFor="let supporter of supportState.supporters">
+      <ion-icon name="person"></ion-icon>
+      <ion-label>{{supporter.subjectClaim}}</ion-label>
+    </ion-chip>
+  </ng-container>
 </ion-content>
