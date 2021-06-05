@@ -1,12 +1,12 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import {IonicModule} from '@ionic/angular';
 
-import {ReceiveSupportPageRoutingModule} from './receive-support-routing.module';
+import {SupportPageRoutingModule} from './support-routing.module';
 
-import {ReceiveSupportPage} from './receive-support.page';
+import {SupportPage} from './support.page';
 import {IssueModule} from '../../components/issue/issue.module';
 
 @NgModule({
@@ -14,9 +14,10 @@ import {IssueModule} from '../../components/issue/issue.module';
     CommonModule,
     FormsModule,
     IonicModule,
-    ReceiveSupportPageRoutingModule,
+    SupportPageRoutingModule,
+    ReactiveFormsModule,
     IssueModule
   ],
-  declarations: [ReceiveSupportPage]
+  declarations: [SupportPage]
 })
-export class ReceiveSupportPageModule {}
+export class SupportPageModule {}

@@ -1,0 +1,22 @@
+form.send-message {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin: 10px;
+
+  ion-item {
+    flex: 1;
+    margin-right: 10px;
+    --border-radius: 5px;
+  }
+}
+
+div.message {
+  display: flex;
+  flex-direction: row;
+
+  &.sent-by-me {
+    justify-content: flex-end;
+  }
+}

@@ -63,6 +63,9 @@ public class IssueResource {
     @POST
     @Authenticated
     public Uni<Issue> post(Issue issue) {
+        if (issue.getId() != null) {
+            throw new BadRequestException("When posting a new entity that entity should not have an id as long as it is not yet created.");
+        }
         return Panache.withTransaction(() ->
                 userRepository.findBySubjectClaim(subjectClaim, LockModeType.PESSIMISTIC_READ).invoke(user -> {
                     if (user.getId() != issue.getCreatorId()) {

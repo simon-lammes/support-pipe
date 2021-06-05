@@ -6,6 +6,7 @@ import de.simonlammes.stream.event.SupportEvent;
 import io.quarkus.hibernate.reactive.panache.Panache;
 import io.quarkus.security.Authenticated;
 import io.smallrye.mutiny.Uni;
+import io.smallrye.mutiny.tuples.Tuple2;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -62,7 +63,7 @@ public class UserResource {
         return Panache.withTransaction(() -> Uni.combine().all().unis(
                 userRepository.findBySubjectClaim(subjectClaim, LockModeType.PESSIMISTIC_READ),
                 issueRepository.findById(issueId, LockModeType.PESSIMISTIC_READ)
-        ).asTuple().chain(objects -> {
+        ).asTuple().call(objects -> {
             User user = objects.getItem1();
             Issue issue = objects.getItem2();
             if (user.getCurrentlySupportedIssueId() != null || user.getCurrentlyExhibitedIssueId() != null) {
@@ -71,8 +72,8 @@ public class UserResource {
             user.setCurrentlySupportedIssueId(issueId);
             issue.setDoesRequireHelp(false);
             return userRepository.persist(user)
-                    .replaceWith(issueRepository.persist(issue))
-                    .replaceWith(user);
-        })).call(user -> Uni.createFrom().completionStage(supportEventEmitter.send(new SupportEvent(user))));
+                    .replaceWith(issueRepository.persist(issue));
+        })).call(objects -> Uni.createFrom().completionStage(supportEventEmitter.send(new SupportEvent(objects.getItem2(), objects.getItem1()))))
+                .onItem().transform(Tuple2::getItem1);
     }
 }

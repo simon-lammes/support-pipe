@@ -2,9 +2,10 @@ import {Action, Selector, State, StateContext, Store} from '@ngxs/store';
 import {ListenToUserRelatedEvents} from './stream.actions';
 import {StreamService} from './stream.service';
 import {finalize} from 'rxjs/operators';
-import {HandleSupportEvent} from '../support/support.actions';
+import {HandleSupportEvent, ReceiveMessage} from '../support/support.actions';
 import {Injectable} from '@angular/core';
 import {SupportEvent} from '../support/support-event';
+import {MessageEvent} from '../message/message-event';
 
 export interface StreamStateModel {
   isListeningToUserRelatedEvents: boolean;
@@ -42,10 +43,18 @@ export class StreamState {
       }))
     ).subscribe(event => {
       switch (event.type) {
+        case 'HeartbeatEvent':
+          break;
         case 'SupportEvent':
           const supportEvent = event as SupportEvent;
           this.store.dispatch(new HandleSupportEvent(supportEvent));
           break;
+        case 'MessageEvent':
+          const messageEvent = event as MessageEvent;
+          this.store.dispatch(new ReceiveMessage(messageEvent.message));
+          break;
+        default:
+          console.warn('Unknown event was sent', event);
       }
     });
   }
