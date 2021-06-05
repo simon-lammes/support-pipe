@@ -1,7 +1,10 @@
 package de.simonlammes.stream;
 
 import de.simonlammes.crosscutting.JsonDeserializer;
-import de.simonlammes.stream.event.*;
+import de.simonlammes.stream.event.HeartbeatEvent;
+import de.simonlammes.stream.event.MessageEvent;
+import de.simonlammes.stream.event.SupportEvent;
+import de.simonlammes.stream.event.UserRelatedEvent;
 import de.simonlammes.user.User;
 import de.simonlammes.user.UserRepository;
 import io.quarkus.security.Authenticated;
@@ -57,6 +60,8 @@ public class EventStreamResource {
         // We subscribe to the uni so that the user is immediately fetched. Otherwise, the connection pool
         // could eventually close and this operation would fail.
         userUni.subscribe();
+        // Send an initial heartbeat to show the browser that the connection was successful
+        Multi<UserRelatedEvent> initialHeartbeat = Multi.createFrom().item(new HeartbeatEvent(OffsetDateTime.now()));
         Multi<UserRelatedEvent> heartbeatEventStream = vertx.periodicStream(30000).toMulti().onItem().transform(value -> new HeartbeatEvent(OffsetDateTime.now()));
         Multi<UserRelatedEvent> supportEventStream = Multi.createFrom().publisher(supportEvents)
                 .map(json -> new JsonDeserializer<SupportEvent>().deserialize(json, SupportEvent.class))
@@ -78,6 +83,7 @@ public class EventStreamResource {
                         })
                 ).map(supportEvent -> supportEvent);
         return Multi.createBy().merging().streams(
+                initialHeartbeat,
                 heartbeatEventStream,
                 supportEventStream,
                 messageEventStream
