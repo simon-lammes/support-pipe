@@ -66,8 +66,8 @@ public class EventStreamResource {
         Multi<UserRelatedEvent> supportEventStream = Multi.createFrom().publisher(supportEvents)
                 .map(json -> new JsonDeserializer<SupportEvent>().deserialize(json, SupportEvent.class))
                 .select().when(supportEvent ->
-                        userUni.map(user -> user.getCurrentlyExhibitedIssueId().equals(
-                                supportEvent.getIssue().getId()
+                        userUni.map(user -> supportEvent.getIssue().getId().equals(
+                                user.getCurrentlyExhibitedIssueId()
                         ))
                 ).map(supportEvent -> supportEvent);
         Multi<UserRelatedEvent> messageEventStream = Multi.createFrom().publisher(messageEvents)

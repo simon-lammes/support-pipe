@@ -33,6 +33,6 @@ export class IssueFeedPage implements OnInit {
 
   async onProposalSupported(proposal: Issue) {
     await this.store.dispatch(new SupportProposalAction(proposal)).toPromise();
-    await this.router.navigate(['support-issue']);
+    await this.router.navigate(['support']);
   }
 }
