@@ -9,7 +9,7 @@ import {UserState} from '../../cross-cutting/user/user.state';
 @Injectable({
   providedIn: 'root'
 })
-export class HasNoIssueExhibitedGuard implements CanActivate {
+export class IsTacklingAnIssueGuard implements CanActivate {
 
   constructor(
     private store: Store,
@@ -25,10 +25,10 @@ export class HasNoIssueExhibitedGuard implements CanActivate {
       switchMap(() => this.store.select(UserState.state)),
       filter(userState => !userState.isWaitingForMyUser),
       first(),
-      map(userState => !userState.myUser.currentlyExhibitedIssueId),
+      map(userState => !!userState.myUser.currentlyTackledIssueId),
       switchMap(async (allowed) => {
         if (!allowed) {
-          await this.router.navigateByUrl('/support');
+          await this.router.navigateByUrl('/tabs/issue-feed');
         }
         return allowed;
       })

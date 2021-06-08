@@ -42,7 +42,7 @@ export class IssueService {
     return this.http.get<Issue>(environment.quarkusBaseUrl + `/issues/${issueId}`, );
   }
 
-  getSupporters(issueId: number) {
-    return this.http.get<User[]>(`${environment.quarkusBaseUrl}/issues/${issueId}/supporters`);
+  getParticipants(issueId: number) {
+    return this.http.get<User[]>(`${environment.quarkusBaseUrl}/issues/${issueId}/participants`);
   }
 }

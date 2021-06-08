@@ -3,6 +3,5 @@ export interface User {
   givenName: string;
   familyName: string;
   subjectClaim: string;
-  currentlySupportedIssueId: number;
-  currentlyExhibitedIssueId: number;
+  currentlyTackledIssueId: number;
 }

@@ -57,23 +57,32 @@ public class UserResource {
     }
 
     @PUT
-    @Path("supportIssue/{issueId}")
+    @Path("supportIssue/{issueId}/{authorId}")
     @Authenticated
-    public Uni<User> tackleIssue(@PathParam("issueId") Long issueId) {
+    public Uni<User> tackleIssue(@PathParam("issueId") Long issueId, @PathParam("authorId") Long authorId) {
         return Panache.withTransaction(() -> Uni.combine().all().unis(
                 userRepository.findBySubjectClaim(subjectClaim, LockModeType.PESSIMISTIC_READ),
+                userRepository.findById(authorId, LockModeType.PESSIMISTIC_READ),
                 issueRepository.findById(issueId, LockModeType.PESSIMISTIC_READ)
         ).asTuple().call(objects -> {
-            User user = objects.getItem1();
-            Issue issue = objects.getItem2();
-            if (user.getCurrentlySupportedIssueId() != null || user.getCurrentlyExhibitedIssueId() != null) {
-                throw new ForbiddenException("This user is already supporting or exhibiting another issue.");
+            User supporter = objects.getItem1();
+            User author = objects.getItem2();
+            Issue issue = objects.getItem3();
+            if (supporter.getCurrentlyTackledIssueId() != null) {
+                throw new ForbiddenException("The supporter is already tackling another issue.");
             }
-            user.setCurrentlySupportedIssueId(issueId);
+            if (!issue.getCreatorId().equals(author.getId())) {
+                throw new ForbiddenException("The provided author id is incorrect.");
+            }
+            if (author.getCurrentlyTackledIssueId() != null) {
+                throw new ForbiddenException("The author is already tackling another issue.");
+            }
+            supporter.setCurrentlyTackledIssueId(issueId);
+            author.setCurrentlyTackledIssueId(issueId);
             issue.setDoesRequireHelp(false);
-            return userRepository.persist(user)
+            return userRepository.persist(supporter)
                     .replaceWith(issueRepository.persist(issue));
-        })).call(objects -> Uni.createFrom().completionStage(supportEventEmitter.send(new SupportEvent(objects.getItem2(), objects.getItem1()))))
+        })).call(objects -> Uni.createFrom().completionStage(supportEventEmitter.send(new SupportEvent(objects.getItem3(), objects.getItem1()))))
                 .onItem().transform(Tuple2::getItem1);
     }
 }

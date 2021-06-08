@@ -18,6 +18,6 @@ export class UserService {
   }
 
   supportIssue(issue: Issue) {
-    return this.http.put<User>(`${environment.quarkusBaseUrl}/users/supportIssue/${issue.id}`, {});
+    return this.http.put<User>(`${environment.quarkusBaseUrl}/users/supportIssue/${issue.id}/${issue.creatorId}`, {});
   }
 }

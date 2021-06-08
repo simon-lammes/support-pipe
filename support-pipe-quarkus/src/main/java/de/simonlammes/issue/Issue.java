@@ -12,7 +12,7 @@ public class Issue {
     private String title;
     private String description;
     @Column(name = "creator_id")
-    private long creatorId;
+    private Long creatorId;
 
     @Column(name = "does_require_help")
     private boolean doesRequireHelp;
@@ -25,11 +25,11 @@ public class Issue {
         this.doesRequireHelp = doesRequireHelp;
     }
 
-    public long getCreatorId() {
+    public Long getCreatorId() {
         return creatorId;
     }
 
-    public void setCreatorId(long creatorId) {
+    public void setCreatorId(Long creatorId) {
         this.creatorId = creatorId;
     }
 

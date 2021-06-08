@@ -18,7 +18,7 @@ public class UserRepository implements PanacheRepository<User> {
         return findBySubjectClaim(subjectClaim, LockModeType.NONE);
     }
 
-    public Uni<List<User>> findByCurrentlySupportedIssueId(Long issueId) {
-        return find("currently_supported_issue_id", issueId).list();
+    public Uni<List<User>> findByCurrentlyTackledIssueId(Long issueId) {
+        return find("currently_tackled_issue_id", issueId).list();
     }
 }

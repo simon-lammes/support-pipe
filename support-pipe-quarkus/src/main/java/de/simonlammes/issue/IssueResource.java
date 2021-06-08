@@ -46,10 +46,10 @@ public class IssueResource {
     }
 
     @GET
-    @Path("/{issueId}/supporters")
+    @Path("/{issueId}/participants")
     @Authenticated
-    public Uni<List<User>> getSupporters(@PathParam("issueId") Long issueId) {
-        return userRepository.findByCurrentlySupportedIssueId(issueId);
+    public Uni<List<User>> getParticipants(@PathParam("issueId") Long issueId) {
+        return userRepository.findByCurrentlyTackledIssueId(issueId);
     }
 
     @GET
@@ -68,18 +68,15 @@ public class IssueResource {
         }
         return Panache.withTransaction(() ->
                 userRepository.findBySubjectClaim(subjectClaim, LockModeType.PESSIMISTIC_READ).invoke(user -> {
-                    if (user.getId() != issue.getCreatorId()) {
+                    if (!user.getId().equals(issue.getCreatorId())) {
                         throw new ForbiddenException("The creator id does not match the id of the user issuing the request.");
                     }
-                    if (user.getCurrentlySupportedIssueId() != null || user.getCurrentlyExhibitedIssueId() != null) {
-                        throw new ForbiddenException("This user is already supporting or exhibiting another issue.");
+                    if (user.getCurrentlyTackledIssueId() != null) {
+                        throw new ForbiddenException("This user is already tackling another issue.");
                     }
                 }).onItem().call(user ->
                         issueRepository.persistAndFlush(issue)
-                ).onItem().call(user -> {
-                    user.setCurrentlyExhibitedIssueId(issue.getId());
-                    return userRepository.persist(user);
-                })
+                )
         ).replaceWith(issue);
     }
 }

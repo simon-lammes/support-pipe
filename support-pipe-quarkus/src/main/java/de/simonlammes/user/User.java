@@ -12,11 +12,8 @@ public class User {
     @Column(name = "subject_claim")
     private String subjectClaim;
 
-    @Column(name = "currently_supported_issue_id")
-    private Long currentlySupportedIssueId;
-
-    @Column(name = "currently_exhibited_issue_id")
-    private Long currentlyExhibitedIssueId;
+    @Column(name = "currently_tackled_issue_id")
+    private Long currentlyTackledIssueId;
 
     @Column(name = "given_name")
     private String givenName;
@@ -40,20 +37,12 @@ public class User {
         this.familyName = familyName;
     }
 
-    public Long getCurrentlyExhibitedIssueId() {
-        return currentlyExhibitedIssueId;
+    public Long getCurrentlyTackledIssueId() {
+        return currentlyTackledIssueId;
     }
 
-    public void setCurrentlyExhibitedIssueId(Long currentlyExhibitedIssue) {
-        this.currentlyExhibitedIssueId = currentlyExhibitedIssue;
-    }
-
-    public Long getCurrentlySupportedIssueId() {
-        return currentlySupportedIssueId;
-    }
-
-    public void setCurrentlySupportedIssueId(Long currentlyTackledIssueId) {
-        this.currentlySupportedIssueId = currentlyTackledIssueId;
+    public void setCurrentlyTackledIssueId(Long currentlyTackledIssueId) {
+        this.currentlyTackledIssueId = currentlyTackledIssueId;
     }
 
     public Long getId() {
@@ -77,8 +66,7 @@ public class User {
         return "User{" +
                 "id=" + id +
                 ", subjectClaim='" + subjectClaim + '\'' +
-                ", currentlySupportedIssueId=" + currentlySupportedIssueId +
-                ", currentlyExhibitedIssueId=" + currentlyExhibitedIssueId +
+                ", currentlySupportedIssueId=" + currentlyTackledIssueId +
                 ", givenName='" + givenName + '\'' +
                 ", familyName='" + familyName + '\'' +
                 '}';

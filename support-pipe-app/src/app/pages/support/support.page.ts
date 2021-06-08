@@ -9,7 +9,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {first, map, switchMap} from 'rxjs/operators';
 import {LoadIssue} from '../../cross-cutting/issue/issue.actions';
 import {IssueState} from '../../cross-cutting/issue/issue.state';
-import {LoadMessages, LoadSupporters, SendMessage} from '../../cross-cutting/support/support.actions';
+import {LoadMessages, LoadParticipants, SendMessage} from '../../cross-cutting/support/support.actions';
 import {Message} from '../../cross-cutting/message/message.service';
 
 @Component({
@@ -31,7 +31,7 @@ export class SupportPage implements OnInit {
     private fb: FormBuilder
   ) {
     this.currentIssueId$ = this.user$.pipe(
-      map(user => user.currentlyExhibitedIssueId ?? user.currentlySupportedIssueId)
+      map(user => user.currentlyTackledIssueId ?? user.currentlyTackledIssueId)
     );
     this.currentIssue$ = this.currentIssueId$.pipe(
       switchMap(async issueId => {
@@ -47,7 +47,7 @@ export class SupportPage implements OnInit {
   ngOnInit(): void {
     this.currentIssueId$.pipe(first()).subscribe(currentIssueId =>
       this.store.dispatch([
-        new LoadSupporters(currentIssueId),
+        new LoadParticipants(currentIssueId),
         new LoadMessages(currentIssueId)
       ])
     );

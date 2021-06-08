@@ -2,9 +2,8 @@ import {NgModule} from '@angular/core';
 import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 import {AuthenticatedGuard} from './cross-cutting/authentication/authenticated.guard';
 import {UserPopulatedGuard} from './cross-cutting/user/user-populated.guard';
-import {HasNoIssueToSupportGuard} from './pages/support/has-no-issue-to-support.guard';
-import {HasNoIssueExhibitedGuard} from './pages/support/has-no-issue-exhibited.guard';
-import {HasIssueToSupportOrExhibitedIssueGuard} from './pages/support/has-issue-to-support-or-exhibited-issue.guard';
+import {IsTacklingNoIssueGuard} from './pages/support/is-tackling-no-issue.guard';
+import {IsTacklingAnIssueGuard} from './pages/support/is-tackling-an-issue.guard';
 
 const routes: Routes = [
   {
@@ -12,14 +11,13 @@ const routes: Routes = [
     canActivate: [
       AuthenticatedGuard,
       UserPopulatedGuard,
-      HasNoIssueToSupportGuard,
-      HasNoIssueExhibitedGuard
+      IsTacklingNoIssueGuard
     ],
     loadChildren: () => import('./pages/tabs/tabs.module').then(m => m.TabsPageModule)
   },
   {
     path: 'support',
-    canActivate: [HasIssueToSupportOrExhibitedIssueGuard],
+    canActivate: [IsTacklingAnIssueGuard],
     loadChildren: () => import('./pages/support/support.module').then(m => m.SupportPageModule)
   },
   {

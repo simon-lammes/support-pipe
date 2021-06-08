@@ -6,8 +6,8 @@ export class HandleSupportEvent {
   constructor(public supportEvent: SupportEvent) { }
 }
 
-export class LoadSupporters {
-  public static readonly type = '[Support] Load Supporters';
+export class LoadParticipants {
+  public static readonly type = '[Support] Load Participants';
   constructor(public issueId: number) { }
 }
 

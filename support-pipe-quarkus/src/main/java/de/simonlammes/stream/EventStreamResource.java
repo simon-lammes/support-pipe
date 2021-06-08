@@ -66,21 +66,17 @@ public class EventStreamResource {
         Multi<UserRelatedEvent> supportEventStream = Multi.createFrom().publisher(supportEvents)
                 .map(json -> new JsonDeserializer<SupportEvent>().deserialize(json, SupportEvent.class))
                 .select().when(supportEvent ->
-                        userUni.map(user -> supportEvent.getIssue().getId().equals(
-                                user.getCurrentlyExhibitedIssueId()
+                        userUni.map(user -> supportEvent.getIssue().getCreatorId().equals(
+                                user.getId()
                         ))
                 ).map(supportEvent -> supportEvent);
         Multi<UserRelatedEvent> messageEventStream = Multi.createFrom().publisher(messageEvents)
                 .map(json -> new JsonDeserializer<MessageEvent>().deserialize(json, MessageEvent.class))
                 .select().when(messageEvent ->
-                        userUni.map(user -> {
-                            return (
-                                    (messageEvent.getMessage().getIssueId().equals(user.getCurrentlyExhibitedIssueId())
-                                            || messageEvent.getMessage().getIssueId().equals(user.getCurrentlySupportedIssueId())
-                                    )
-                                            && !user.getId().equals(messageEvent.getMessage().getAuthorId())
-                            );
-                        })
+                        userUni.map(user ->
+                                messageEvent.getMessage().getIssueId().equals(user.getCurrentlyTackledIssueId())
+                                        && !user.getId().equals(messageEvent.getMessage().getAuthorId())
+                        )
                 ).map(supportEvent -> supportEvent);
         return Multi.createBy().merging().streams(
                 initialHeartbeat,

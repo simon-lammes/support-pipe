@@ -32,6 +32,6 @@ export class SaveIssuePage implements OnInit {
       doesRequireHelp: true,
       creatorId: this.store.selectSnapshot(UserState.myUser).id
     }));
-    await this.router.navigateByUrl('/receive-support');
+    await this.router.navigateByUrl('/tabs/my-issues');
   }
 }

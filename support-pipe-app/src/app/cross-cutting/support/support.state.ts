@@ -1,5 +1,5 @@
 import {Action, Selector, State, StateContext} from '@ngxs/store';
-import {HandleSupportEvent, LoadMessages, LoadSupporters, ReceiveMessage, SendMessage} from './support.actions';
+import {HandleSupportEvent, LoadMessages, LoadParticipants, ReceiveMessage, SendMessage} from './support.actions';
 import {Injectable} from '@angular/core';
 import {User} from '../user/user.model';
 import {IssueService} from '../issue/issue.service';
@@ -8,14 +8,15 @@ import {Message, MessageService} from '../message/message.service';
 import {VirtualEntity} from '../virtual-entity';
 import * as uuid from 'uuid-random';
 import produce from 'immer';
+import {Router} from '@angular/router';
 
 export interface OptimisticSupportStateModel {
-  supporters: User[];
+  participants: User[];
   messages: Message[];
 }
 
 export interface SupportStateModel {
-  supporters: User[];
+  participants: User[];
   messages: VirtualEntity<Message>[];
 }
 
@@ -23,7 +24,7 @@ export interface SupportStateModel {
 @State<SupportStateModel>({
   name: 'support',
   defaults: {
-    supporters: [],
+    participants: [],
     messages: []
   }
 })
@@ -31,14 +32,15 @@ export class SupportState {
 
   constructor(
     private issueService: IssueService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private router: Router
   ) {
   }
 
   @Selector()
   public static getOptimisticState(state: SupportStateModel): OptimisticSupportStateModel {
     return {
-      supporters: state.supporters,
+      participants: state.participants,
       messages: state.messages.map(virtualMessage => virtualMessage.persisted ?? virtualMessage.mutated)
     };
   }
@@ -46,15 +48,17 @@ export class SupportState {
   @Action(HandleSupportEvent)
   public addSupporter(ctx: StateContext<SupportStateModel>, {supportEvent}: HandleSupportEvent) {
     ctx.patchState({
-      supporters: [...ctx.getState().supporters, supportEvent.supporter]
+      participants: [...ctx.getState().participants, supportEvent.supporter]
     });
+    // If the user is not already at the support page, we need to navigate him there!
+    this.router.navigateByUrl('/support').then();
   }
 
-  @Action(LoadSupporters)
-  public loadSupporters(ctx: StateContext<SupportStateModel>, {issueId}: LoadSupporters) {
-    return this.issueService.getSupporters(issueId).pipe(
-      tap(supporters => {
-        ctx.patchState({supporters});
+  @Action(LoadParticipants)
+  public loadParticipants(ctx: StateContext<SupportStateModel>, {issueId}: LoadParticipants) {
+    return this.issueService.getParticipants(issueId).pipe(
+      tap(participants => {
+        ctx.patchState({participants});
       })
     );
   }
