@@ -1,4 +1,4 @@
-import {Action, Selector, State, StateContext} from '@ngxs/store';
+import {Action, Selector, State, StateContext, Store} from '@ngxs/store';
 import {HandleSupportEvent, LoadMessages, LoadParticipants, ReceiveMessage, SendMessage} from './support.actions';
 import {Injectable} from '@angular/core';
 import {User} from '../user/user.model';
@@ -9,6 +9,7 @@ import {VirtualEntity} from '../virtual-entity';
 import * as uuid from 'uuid-random';
 import produce from 'immer';
 import {Router} from '@angular/router';
+import {UserState} from '../user/user.state';
 
 export interface OptimisticSupportStateModel {
   participants: User[];
@@ -33,7 +34,8 @@ export class SupportState {
   constructor(
     private issueService: IssueService,
     private messageService: MessageService,
-    private router: Router
+    private router: Router,
+    private store: Store
   ) {
   }
 
@@ -47,6 +49,13 @@ export class SupportState {
 
   @Action(HandleSupportEvent)
   public addSupporter(ctx: StateContext<SupportStateModel>, {supportEvent}: HandleSupportEvent) {
+    const myUser = this.store.selectSnapshot(UserState.myUser);
+    if (
+      supportEvent.issue.creatorId !== myUser.id &&
+      supportEvent.issue.id !== myUser.currentlyTackledIssueId
+    ) {
+      return;
+    }
     ctx.patchState({
       participants: [...ctx.getState().participants, supportEvent.supporter]
     });
@@ -98,6 +107,13 @@ export class SupportState {
 
   @Action(ReceiveMessage)
   public receiveMessage(ctx: StateContext<SupportStateModel>, {message}: ReceiveMessage) {
+    const myUser = this.store.selectSnapshot(UserState.myUser);
+    if (
+      message.issueId !== myUser.currentlyTackledIssueId
+      || message.authorId === myUser.id
+    ) {
+      return;
+    }
     ctx.patchState({
       messages: [...ctx.getState().messages, {uuid: uuid(), persisted: message}]
     });

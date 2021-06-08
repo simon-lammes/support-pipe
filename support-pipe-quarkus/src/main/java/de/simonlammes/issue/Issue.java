@@ -14,6 +14,10 @@ public class Issue {
     @Column(name = "creator_id")
     private Long creatorId;
 
+    @OneToOne()
+    @JoinColumn(name = "creator_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private User author;
+
     @Column(name = "does_require_help")
     private boolean doesRequireHelp;
 

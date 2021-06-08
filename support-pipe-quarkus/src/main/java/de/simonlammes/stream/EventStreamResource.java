@@ -54,30 +54,15 @@ public class EventStreamResource {
     @Authenticated
     @Path("/user-related-events")
     public Multi<UserRelatedEvent> greeting() {
-        // We only want to fetch the user one time and provide the memoized value to all subscribers.
-        // The user is not going to change anyway.
-        Uni<User> userUni = userRepository.findBySubjectClaim(subjectClaim).memoize().indefinitely();
-        // We subscribe to the uni so that the user is immediately fetched. Otherwise, the connection pool
-        // could eventually close and this operation would fail.
-        userUni.subscribe();
         // Send an initial heartbeat to show the browser that the connection was successful
         Multi<UserRelatedEvent> initialHeartbeat = Multi.createFrom().item(new HeartbeatEvent(OffsetDateTime.now()));
         Multi<UserRelatedEvent> heartbeatEventStream = vertx.periodicStream(30000).toMulti().onItem().transform(value -> new HeartbeatEvent(OffsetDateTime.now()));
         Multi<UserRelatedEvent> supportEventStream = Multi.createFrom().publisher(supportEvents)
                 .map(json -> new JsonDeserializer<SupportEvent>().deserialize(json, SupportEvent.class))
-                .select().when(supportEvent ->
-                        userUni.map(user -> supportEvent.getIssue().getCreatorId().equals(
-                                user.getId()
-                        ))
-                ).map(supportEvent -> supportEvent);
+                .map(supportEvent -> supportEvent);
         Multi<UserRelatedEvent> messageEventStream = Multi.createFrom().publisher(messageEvents)
                 .map(json -> new JsonDeserializer<MessageEvent>().deserialize(json, MessageEvent.class))
-                .select().when(messageEvent ->
-                        userUni.map(user ->
-                                messageEvent.getMessage().getIssueId().equals(user.getCurrentlyTackledIssueId())
-                                        && !user.getId().equals(messageEvent.getMessage().getAuthorId())
-                        )
-                ).map(supportEvent -> supportEvent);
+                .map(supportEvent -> supportEvent);
         return Multi.createBy().merging().streams(
                 initialHeartbeat,
                 heartbeatEventStream,

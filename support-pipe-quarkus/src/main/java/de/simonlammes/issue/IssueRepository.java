@@ -6,9 +6,7 @@ import io.smallrye.mutiny.Uni;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.BadRequestException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @ApplicationScoped
 public class IssueRepository implements PanacheRepository<Issue> {
@@ -31,11 +29,15 @@ public class IssueRepository implements PanacheRepository<Issue> {
 
     public Uni<Issue> findProposal(long excludedCreatorId, List<Long> excludedIssueIds) {
         if (excludedIssueIds.isEmpty()) {
-            return find("creatorId != :excludedCreatorId", Parameters
-                    .with("excludedCreatorId", excludedCreatorId)).firstResult();
+            // This should have no effect except of making Hibernate Panache create a query with valid syntax.
+            excludedIssueIds.add(-1L);
         }
-        return find("creatorId != :excludedCreatorId and id not in :excludedIssueIds", Parameters
-                .with("excludedCreatorId", excludedCreatorId)
-                .and("excludedIssueIds", excludedIssueIds)).firstResult();
+        return find("creatorId != :excludedCreatorId " +
+                        "and id not in :excludedIssueIds " +
+                        "and author.currentlyTackledIssueId is null",
+                Parameters
+                        .with("excludedCreatorId", excludedCreatorId)
+                        .and("excludedIssueIds", excludedIssueIds)
+        ).firstResult();
     }
 }
