@@ -1,0 +1,10 @@
+<div class="heading-wrapper" [class.sent-by-me]="areMessagesSentByMe()" *ngIf="!areMessagesSentByMe()">
+  <div class="heading" *ngIf="author$ | async as author">
+    {{author.givenName}} {{author.familyName}}
+  </div>
+</div>
+<div class="message-wrapper" *ngFor="let message of messages" [class.sent-by-me]="areMessagesSentByMe()">
+  <div class="message" [class.sent-by-me]="areMessagesSentByMe()">
+    {{message.text}}
+  </div>
+</div>

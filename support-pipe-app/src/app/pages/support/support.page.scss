@@ -11,12 +11,3 @@ form.send-message {
     --border-radius: 5px;
   }
 }
-
-div.message {
-  display: flex;
-  flex-direction: row;
-
-  &.sent-by-me {
-    justify-content: flex-end;
-  }
-}

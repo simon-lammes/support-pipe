@@ -8,6 +8,7 @@ import {SupportPageRoutingModule} from './support-routing.module';
 
 import {SupportPage} from './support.page';
 import {IssueModule} from '../../components/issue/issue.module';
+import {MessageBlockModule} from '../../components/message-block/message-block.module';
 
 @NgModule({
   imports: [
@@ -16,7 +17,8 @@ import {IssueModule} from '../../components/issue/issue.module';
     IonicModule,
     SupportPageRoutingModule,
     ReactiveFormsModule,
-    IssueModule
+    IssueModule,
+    MessageBlockModule
   ],
   declarations: [SupportPage]
 })

@@ -24,11 +24,7 @@
     </ion-chip>
 
     <!-- Messages -->
-    <div class="message" *ngFor="let message of supportState.messages"
-         [class.sent-by-me]="(user$ | async).id === message.authorId">
-      <ion-chip [color]="(user$ | async).id === message.authorId ? 'primary' : undefined">{{message.text}}</ion-chip>
-    </div>
-
+    <app-message-block *ngFor="let messageBlock of messageBlocks$ | async" [messages]="messageBlock"></app-message-block>
     <form class="send-message" [formGroup]="messageForm" (ngSubmit)="sendMessage()">
       <ion-item>
         <ion-textarea formControlName="text" placeholder="Message"></ion-textarea>

@@ -26,6 +26,11 @@ export class SupportPage implements OnInit {
   currentIssue$: Observable<Issue>;
   messageForm: FormGroup;
 
+  /**
+   * An array of message arrays so that adjacent messages of the same person are grouped together.
+   */
+  messageBlocks$: Observable<Message[][]>;
+
   constructor(
     private store: Store,
     private fb: FormBuilder
@@ -41,6 +46,24 @@ export class SupportPage implements OnInit {
       switchMap(issueId => this.store.select(
         IssueState.issueById(issueId)
       ))
+    );
+    this.messageBlocks$ = this.supportState$.pipe(
+      map(supportState => {
+        const messageBlocks = [];
+        let currentMessageBlock: Message[] = [];
+        for (const message of supportState.messages) {
+          if (currentMessageBlock.length === 0 || currentMessageBlock[0].authorId === message.authorId) {
+            currentMessageBlock.push(message);
+          } else {
+            messageBlocks.push(currentMessageBlock);
+            currentMessageBlock = [message];
+          }
+        }
+        if (currentMessageBlock.length > 0) {
+          messageBlocks.push(currentMessageBlock);
+        }
+        return messageBlocks;
+      })
     );
   }
 

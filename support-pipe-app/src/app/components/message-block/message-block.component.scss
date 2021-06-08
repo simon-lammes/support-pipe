@@ -1,0 +1,33 @@
+div.heading-wrapper {
+  display: flex;
+  flex-direction: row;
+
+  &.sent-by-me {
+    justify-content: flex-end;
+  }
+
+  .heading {
+    font-size: 0.8em;
+    margin: 3px;
+  }
+}
+
+div.message-wrapper {
+  display: flex;
+  flex-direction: row;
+
+  &.sent-by-me {
+    justify-content: flex-end;
+  }
+
+  .message {
+    padding: 5px 15px;
+    margin: 3px;
+    border-radius: 5px;
+    background-color: var(--ion-color-light);
+
+    &.sent-by-me {
+      background-color: var(--ion-color-primary);
+    }
+  }
+}
