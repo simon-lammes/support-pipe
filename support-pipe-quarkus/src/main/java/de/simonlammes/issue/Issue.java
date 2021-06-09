@@ -3,6 +3,7 @@ package de.simonlammes.issue;
 import de.simonlammes.user.User;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "issues")
@@ -14,12 +15,31 @@ public class Issue {
     @Column(name = "creator_id")
     private Long creatorId;
 
+    @Column(name = "closed_timestamp")
+    private Timestamp closedTimestamp;
+
     @ManyToOne()
     @JoinColumn(name = "creator_id", referencedColumnName = "id", insertable = false, updatable = false)
     private User author;
 
     @Column(name = "does_require_help")
     private boolean doesRequireHelp;
+
+    public Timestamp getClosedTimestamp() {
+        return closedTimestamp;
+    }
+
+    public void setClosedTimestamp(Timestamp closedTimestamp) {
+        this.closedTimestamp = closedTimestamp;
+    }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
+    }
 
     public boolean isDoesRequireHelp() {
         return doesRequireHelp;

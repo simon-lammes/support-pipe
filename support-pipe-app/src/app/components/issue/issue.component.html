@@ -1,5 +1,13 @@
 <ion-card>
   <ion-card-header>
+    <ng-container *ngIf="showIssueStatus">
+      <ion-card-subtitle *ngIf="issue.doesRequireHelp">
+        <ion-text color="primary">Looking for Supporters...</ion-text>
+      </ion-card-subtitle>
+      <ion-card-subtitle *ngIf="issue.closedTimestamp">
+        closed on {{issue.closedTimestamp | date}}
+      </ion-card-subtitle>
+    </ng-container>
     <ion-card-title>{{ issue.title }}</ion-card-title>
   </ion-card-header>
 

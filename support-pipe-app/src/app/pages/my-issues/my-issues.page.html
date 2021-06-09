@@ -7,7 +7,7 @@
 </ion-header>
 
 <ion-content>
-  <app-issue *ngFor="let issue of myPostedIssues$ | async; trackBy: trackByIssue" [issue]="issue"></app-issue>
+  <app-issue *ngFor="let issue of myPostedIssues$ | async; trackBy: trackByIssue" [issue]="issue" showIssueStatus="true"></app-issue>
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button [routerLink]="['save-issue']">
       <ion-icon name="add"></ion-icon>

@@ -20,6 +20,8 @@ import javax.inject.Inject;
 import javax.persistence.LockModeType;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 
 @RequestScoped
@@ -108,6 +110,7 @@ public class UserResource {
                 throw new ForbiddenException("You can only close issues that you own");
             }
             issue.setDoesRequireHelp(false);
+            issue.setClosedTimestamp(Timestamp.from(Instant.now()));
             involvedUsers.forEach(user -> user.setCurrentlyTackledIssueId(null));
             return Panache.withTransaction(() -> Uni.combine().all().unis(
                     issueRepository.persist(issue),

@@ -19,6 +19,8 @@ export class IssueComponent implements OnChanges {
    */
   @Input() disabledTimeoutForNewIssue = 1000;
 
+  @Input() showIssueStatus = false;
+
   @Input() enabledActions: IssueAction[] = [];
   @Output() issueRejected = new EventEmitter<boolean>();
   @Output() issueSupported = new EventEmitter<boolean>();

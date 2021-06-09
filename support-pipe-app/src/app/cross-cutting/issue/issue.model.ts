@@ -4,4 +4,5 @@ export interface Issue {
   title: string;
   description: string;
   doesRequireHelp: boolean;
+  closedTimestamp?: string;
 }
