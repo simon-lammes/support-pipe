@@ -1,5 +1,7 @@
 package de.simonlammes.issue;
 
+import de.simonlammes.stream.event.IssueCreatedEvent;
+import de.simonlammes.stream.event.MessageEvent;
 import de.simonlammes.user.User;
 import de.simonlammes.user.UserRepository;
 import io.quarkus.hibernate.reactive.panache.Panache;
@@ -9,6 +11,8 @@ import io.smallrye.mutiny.tuples.Tuple2;
 import io.smallrye.mutiny.tuples.Tuple3;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.Claims;
+import org.eclipse.microprofile.reactive.messaging.Channel;
+import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.jboss.resteasy.reactive.RestQuery;
 
 import javax.enterprise.context.RequestScoped;
@@ -34,6 +38,9 @@ public class IssueResource {
     @Inject
     @Claim(standard = Claims.sub)
     String subjectClaim;
+
+    @Inject @Channel("issue-created-events-outgoing")
+    Emitter<IssueCreatedEvent> issueCreatedEventEmitter;
 
     @GET
     @Authenticated
@@ -79,7 +86,11 @@ public class IssueResource {
                     }
                 }).onItem().call(user ->
                         issueRepository.persistAndFlush(issue)
-                )
+                ).call(() -> {
+                    IssueCreatedEvent event = new IssueCreatedEvent();
+                    event.setIssue(issue);
+                    return Uni.createFrom().completionStage(issueCreatedEventEmitter.send(event));
+                })
         ).replaceWith(issue);
     }
 }

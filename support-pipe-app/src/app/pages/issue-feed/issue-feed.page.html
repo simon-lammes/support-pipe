@@ -8,7 +8,7 @@
   <ng-container *ngIf="issueState$ | async as issueState">
     <ion-card *ngIf="issueState.proposalState === 'noneFound'">
       <ion-card-content>
-        We could not find a proposal for you.
+        Currently, there is no proposal for you. Once a new issue is created, it will automatically show up here.
       </ion-card-content>
     </ion-card>
   </ng-container>

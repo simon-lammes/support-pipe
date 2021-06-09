@@ -51,6 +51,10 @@ public class EventStreamResource {
     @Channel("issue-closed-events")
     Publisher<JsonObject> issueClosedEvents;
 
+    @Inject
+    @Channel("issue-created-events")
+    Publisher<JsonObject> issueCreatedEvents;
+
     @GET
     @Authenticated
     @Path("/user-related-events")
@@ -60,19 +64,23 @@ public class EventStreamResource {
         Multi<UserRelatedEvent> heartbeatEventStream = vertx.periodicStream(30000).toMulti().onItem().transform(value -> new HeartbeatEvent(OffsetDateTime.now()));
         Multi<UserRelatedEvent> supportEventStream = Multi.createFrom().publisher(supportEvents)
                 .map(json -> new JsonDeserializer<SupportEvent>().deserialize(json, SupportEvent.class))
-                .map(supportEvent -> supportEvent);
+                .map(event -> event);
         Multi<UserRelatedEvent> messageEventStream = Multi.createFrom().publisher(messageEvents)
                 .map(json -> new JsonDeserializer<MessageEvent>().deserialize(json, MessageEvent.class))
-                .map(supportEvent -> supportEvent);
+                .map(event -> event);
         Multi<UserRelatedEvent> issueClosedEventStream = Multi.createFrom().publisher(issueClosedEvents)
                 .map(json -> new JsonDeserializer<IssueClosedEvent>().deserialize(json, IssueClosedEvent.class))
-                .map(supportEvent -> supportEvent);
+                .map(event -> event);
+        Multi<UserRelatedEvent> issueCreatedEventStream = Multi.createFrom().publisher(issueCreatedEvents)
+                .map(json -> new JsonDeserializer<IssueCreatedEvent>().deserialize(json, IssueCreatedEvent.class))
+                .map(event -> event);
         return Multi.createBy().merging().streams(
                 initialHeartbeat,
                 heartbeatEventStream,
                 supportEventStream,
                 messageEventStream,
-                issueClosedEventStream
+                issueClosedEventStream,
+                issueCreatedEventStream
         );
     }
 }

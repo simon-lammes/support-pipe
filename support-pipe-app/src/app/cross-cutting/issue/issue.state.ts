@@ -1,6 +1,7 @@
 import {Action, createSelector, Selector, State, StateContext} from '@ngxs/store';
 import {
   HandleProposalBeingTakenBySomeoneElse,
+  IssueCreated,
   LoadIssue,
   LoadProposalAction,
   RejectProposalAction
@@ -11,12 +12,14 @@ import {Issue} from './issue.model';
 import {Injectable} from '@angular/core';
 import produce from 'immer';
 
+type ProposalState = 'initial' | 'loading' | 'found' | 'noneFound' | 'error';
+
 export interface IssueStateModel {
   issues: {
     [issueId: number]: Issue;
   };
   proposalId: number;
-  proposalState: 'initial' | 'loading' | 'found' | 'noneFound' | 'error';
+  proposalState: ProposalState;
   rejectedProposalIds: number[];
 }
 
@@ -118,5 +121,18 @@ export class IssueState {
       return;
     }
     return ctx.dispatch(new LoadProposalAction());
+  }
+
+  @Action(IssueCreated)
+  public issueCreated(ctx: StateContext<IssueStateModel>, {event: {issue}}: IssueCreated) {
+    const state = ctx.getState();
+    // Only in certain cases we are interested in doing something we this event.
+    if (new Array<ProposalState>('error', 'noneFound').includes(state.proposalState)) {
+      ctx.setState(produce(draft => {
+        draft.issues[issue.id] = issue;
+        draft.proposalId = issue.id;
+        draft.proposalState = 'found';
+      }));
+    }
   }
 }

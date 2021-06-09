@@ -6,9 +6,10 @@ import {AddSupporter, ReceiveMessage} from '../support/support.actions';
 import {Injectable} from '@angular/core';
 import {SupportEvent} from '../support/support-event';
 import {MessageEvent} from '../message/message-event';
-import {HandleProposalBeingTakenBySomeoneElse} from '../issue/issue.actions';
+import {HandleProposalBeingTakenBySomeoneElse, IssueCreated} from '../issue/issue.actions';
 import {IssueClosedEvent} from '../issue/issue-closed-event';
 import {IssueClosed} from '../user/user.actions';
+import {IssueCreatedEvent} from '../issue/issue-created-event';
 
 export interface StreamStateModel {
   isListeningToUserRelatedEvents: boolean;
@@ -62,6 +63,10 @@ export class StreamState {
         case 'IssueClosedEvent':
           const issueClosedEvent = event as IssueClosedEvent;
           this.store.dispatch(new IssueClosed(issueClosedEvent));
+          break;
+        case 'IssueCreatedEvent':
+          const issueCreatedEvent = event as IssueCreatedEvent;
+          this.store.dispatch(new IssueCreated(issueCreatedEvent));
           break;
         default:
           console.warn('Unknown event was sent', event);
