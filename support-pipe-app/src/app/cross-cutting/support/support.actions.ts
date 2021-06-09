@@ -1,7 +1,7 @@
 import {SupportEvent} from './support-event';
 import {Message} from '../message/message.service';
 
-export class HandleSupportEvent {
+export class AddSupporter {
   public static readonly type = '[Support] Add Supporter';
   constructor(public supportEvent: SupportEvent) { }
 }

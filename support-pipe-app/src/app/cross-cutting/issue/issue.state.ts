@@ -1,5 +1,10 @@
 import {Action, createSelector, Selector, State, StateContext} from '@ngxs/store';
-import {LoadIssue, LoadProposalAction, RejectProposalAction} from './issue.actions';
+import {
+  HandleProposalBeingTakenBySomeoneElse,
+  LoadIssue,
+  LoadProposalAction,
+  RejectProposalAction
+} from './issue.actions';
 import {IssueService} from './issue.service';
 import {catchError, tap} from 'rxjs/operators';
 import {Issue} from './issue.model';
@@ -105,5 +110,13 @@ export class IssueState {
         draft.rejectedProposalIds.push(proposal.id);
       })
     );
+  }
+
+  @Action(HandleProposalBeingTakenBySomeoneElse)
+  public handleProposalBeingTakenBySomeoneElse(ctx: StateContext<IssueStateModel>, {supportEvent}: HandleProposalBeingTakenBySomeoneElse) {
+    if (ctx.getState().proposalId !== supportEvent.issue.id) {
+      return;
+    }
+    return ctx.dispatch(new LoadProposalAction());
   }
 }

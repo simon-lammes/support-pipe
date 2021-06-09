@@ -2,10 +2,11 @@ import {Action, Selector, State, StateContext, Store} from '@ngxs/store';
 import {ListenToUserRelatedEvents} from './stream.actions';
 import {StreamService} from './stream.service';
 import {finalize} from 'rxjs/operators';
-import {HandleSupportEvent, ReceiveMessage} from '../support/support.actions';
+import {AddSupporter, ReceiveMessage} from '../support/support.actions';
 import {Injectable} from '@angular/core';
 import {SupportEvent} from '../support/support-event';
 import {MessageEvent} from '../message/message-event';
+import {HandleProposalBeingTakenBySomeoneElse} from '../issue/issue.actions';
 
 export interface StreamStateModel {
   isListeningToUserRelatedEvents: boolean;
@@ -47,7 +48,10 @@ export class StreamState {
           break;
         case 'SupportEvent':
           const supportEvent = event as SupportEvent;
-          this.store.dispatch(new HandleSupportEvent(supportEvent));
+          this.store.dispatch([
+            new AddSupporter(supportEvent),
+            new HandleProposalBeingTakenBySomeoneElse(supportEvent)
+          ]);
           break;
         case 'MessageEvent':
           const messageEvent = event as MessageEvent;

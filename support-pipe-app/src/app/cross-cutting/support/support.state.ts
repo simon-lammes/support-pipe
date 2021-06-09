@@ -1,5 +1,5 @@
 import {Action, Selector, State, StateContext, Store} from '@ngxs/store';
-import {HandleSupportEvent, LoadMessages, LoadParticipants, ReceiveMessage, SendMessage} from './support.actions';
+import {AddSupporter, LoadMessages, LoadParticipants, ReceiveMessage, SendMessage} from './support.actions';
 import {Injectable} from '@angular/core';
 import {User} from '../user/user.model';
 import {IssueService} from '../issue/issue.service';
@@ -47,8 +47,8 @@ export class SupportState {
     };
   }
 
-  @Action(HandleSupportEvent)
-  public addSupporter(ctx: StateContext<SupportStateModel>, {supportEvent}: HandleSupportEvent) {
+  @Action(AddSupporter)
+  public addSupporter(ctx: StateContext<SupportStateModel>, {supportEvent}: AddSupporter) {
     const myUser = this.store.selectSnapshot(UserState.myUser);
     if (
       supportEvent.issue.creatorId !== myUser.id &&
