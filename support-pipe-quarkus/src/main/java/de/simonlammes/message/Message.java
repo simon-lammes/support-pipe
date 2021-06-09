@@ -1,5 +1,7 @@
 package de.simonlammes.message;
 
+import de.simonlammes.user.User;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
@@ -15,11 +17,23 @@ public class Message {
     @Column(name = "author_id")
     private long authorId;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "author_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private User author;
+
     @Column(name = "issue_id")
     private Long issueId;
 
     @Column(name = "timestamp")
     private Timestamp timestamp;
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
+    }
 
     public Timestamp getTimestamp() {
         return timestamp;
