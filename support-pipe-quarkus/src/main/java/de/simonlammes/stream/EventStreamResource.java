@@ -1,10 +1,7 @@
 package de.simonlammes.stream;
 
 import de.simonlammes.crosscutting.JsonDeserializer;
-import de.simonlammes.stream.event.HeartbeatEvent;
-import de.simonlammes.stream.event.MessageEvent;
-import de.simonlammes.stream.event.SupportEvent;
-import de.simonlammes.stream.event.UserRelatedEvent;
+import de.simonlammes.stream.event.*;
 import de.simonlammes.user.User;
 import de.simonlammes.user.UserRepository;
 import io.quarkus.security.Authenticated;
@@ -50,6 +47,10 @@ public class EventStreamResource {
     @Channel("message-events")
     Publisher<JsonObject> messageEvents;
 
+    @Inject
+    @Channel("issue-closed-events")
+    Publisher<JsonObject> issueClosedEvents;
+
     @GET
     @Authenticated
     @Path("/user-related-events")
@@ -63,11 +64,15 @@ public class EventStreamResource {
         Multi<UserRelatedEvent> messageEventStream = Multi.createFrom().publisher(messageEvents)
                 .map(json -> new JsonDeserializer<MessageEvent>().deserialize(json, MessageEvent.class))
                 .map(supportEvent -> supportEvent);
+        Multi<UserRelatedEvent> issueClosedEventStream = Multi.createFrom().publisher(issueClosedEvents)
+                .map(json -> new JsonDeserializer<IssueClosedEvent>().deserialize(json, IssueClosedEvent.class))
+                .map(supportEvent -> supportEvent);
         return Multi.createBy().merging().streams(
                 initialHeartbeat,
                 heartbeatEventStream,
                 supportEventStream,
-                messageEventStream
+                messageEventStream,
+                issueClosedEventStream
         );
     }
 }

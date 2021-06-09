@@ -57,7 +57,7 @@ export class IssueState {
   @Action(LoadIssue)
   public loadIssue(ctx: StateContext<IssueStateModel>, { issueId }: LoadIssue) {
     const state = ctx.getState();
-    if (state.issues && state.issues[issueId]) {
+    if (!issueId || (state.issues && state.issues[issueId])) {
       return;
     }
     return this.issueService.getIssueById(issueId).pipe(

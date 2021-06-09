@@ -12,7 +12,8 @@
       </ion-card-content>
     </ion-card>
   </ng-container>
-  <app-issue *ngIf="proposal$ | async as proposal" [issue]="proposal" [isProposal]="true"
+  <app-issue *ngIf="proposal$ | async as proposal" [issue]="proposal"
+             [enabledActions]="['reject', 'support']"
              (issueRejected)="onProposalRejected(proposal)"
              (issueSupported)="onProposalSupported(proposal)"></app-issue>
 </ion-content>

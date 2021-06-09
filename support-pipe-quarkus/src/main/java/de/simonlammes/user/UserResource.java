@@ -2,11 +2,13 @@ package de.simonlammes.user;
 
 import de.simonlammes.issue.Issue;
 import de.simonlammes.issue.IssueRepository;
+import de.simonlammes.stream.event.IssueClosedEvent;
 import de.simonlammes.stream.event.SupportEvent;
 import io.quarkus.hibernate.reactive.panache.Panache;
 import io.quarkus.security.Authenticated;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.tuples.Tuple2;
+import io.smallrye.mutiny.tuples.Tuple3;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -18,6 +20,7 @@ import javax.inject.Inject;
 import javax.persistence.LockModeType;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.List;
 
 @RequestScoped
 @Path("/users")
@@ -40,6 +43,9 @@ public class UserResource {
 
     @Inject @Channel("support-events-outgoing")
     Emitter<SupportEvent> supportEventEmitter;
+
+    @Inject @Channel("issue-closed-events-outgoing")
+    Emitter<IssueClosedEvent> issueClosedEventEmitter;
 
     @PUT
     @Path("/me")
@@ -84,5 +90,34 @@ public class UserResource {
                     .replaceWith(issueRepository.persist(issue));
         })).call(objects -> Uni.createFrom().completionStage(supportEventEmitter.send(new SupportEvent(objects.getItem3(), objects.getItem1()))))
                 .onItem().transform(Tuple2::getItem1);
+    }
+
+    @PUT
+    @Path("/close-issue/{issueId}")
+    @Authenticated
+    public Uni<User> closeIssue(@PathParam("issueId") Long issueId) {
+        return Uni.combine().all().unis(
+                issueRepository.findById(issueId),
+                userRepository.findByCurrentlyTackledIssueId(issueId),
+                userRepository.findBySubjectClaim(subjectClaim)
+        ).asTuple().onItem().call(tuple -> {
+            Issue issue = tuple.getItem1();
+            List<User> involvedUsers = tuple.getItem2();
+            User actor = tuple.getItem3();
+            if (!issue.getCreatorId().equals(actor.getId())) {
+                throw new ForbiddenException("You can only close issues that you own");
+            }
+            issue.setDoesRequireHelp(false);
+            involvedUsers.forEach(user -> user.setCurrentlyTackledIssueId(null));
+            return Panache.withTransaction(() -> Uni.combine().all().unis(
+                    issueRepository.persist(issue),
+                    userRepository.persist(involvedUsers)
+            ).asTuple());
+        }).call(objects -> {
+            IssueClosedEvent event = new IssueClosedEvent();
+            event.setIssue(objects.getItem1());
+            event.setParticipants(objects.getItem2());
+            return Uni.createFrom().completionStage(issueClosedEventEmitter.send(event));
+        }).map(Tuple3::getItem3);
     }
 }

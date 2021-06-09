@@ -1,5 +1,9 @@
 import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import {Issue} from '../../cross-cutting/issue/issue.model';
+import {Store} from '@ngxs/store';
+import {CloseIssue} from '../../cross-cutting/user/user.actions';
+
+export type IssueAction = 'reject' | 'support' | 'close';
 
 @Component({
   selector: 'app-issue',
@@ -15,13 +19,15 @@ export class IssueComponent implements OnChanges {
    */
   @Input() disabledTimeoutForNewIssue = 1000;
 
-  /**
-   * Whether this issue is a proposal for the user to help fixing.
-   */
-  @Input() isProposal = false;
+  @Input() enabledActions: IssueAction[] = [];
   @Output() issueRejected = new EventEmitter<boolean>();
   @Output() issueSupported = new EventEmitter<boolean>();
   isIssueEnabled = true;
+
+  constructor(
+    private store: Store
+  ) {
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     const newIssue = changes.issue?.currentValue as Issue;
@@ -42,5 +48,9 @@ export class IssueComponent implements OnChanges {
 
   supportIssue() {
     this.issueSupported.emit(true);
+  }
+
+  closeIssue() {
+    this.store.dispatch(new CloseIssue(this.issue));
   }
 }

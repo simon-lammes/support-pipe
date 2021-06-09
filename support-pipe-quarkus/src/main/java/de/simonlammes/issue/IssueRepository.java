@@ -34,6 +34,7 @@ public class IssueRepository implements PanacheRepository<Issue> {
         }
         return find("creatorId != :excludedCreatorId " +
                         "and id not in :excludedIssueIds " +
+                        "and doesRequireHelp = true " +
                         "and author.currentlyTackledIssueId is null",
                 Parameters
                         .with("excludedCreatorId", excludedCreatorId)

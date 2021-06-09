@@ -1,9 +1,10 @@
 import {Action, Selector, State, StateContext} from '@ngxs/store';
-import {PopulateMyUser, SupportProposalAction} from './user.actions';
+import {CloseIssue, IssueClosed, PopulateMyUser, SupportProposalAction} from './user.actions';
 import {UserService} from './user.service';
-import {finalize, tap} from 'rxjs/operators';
+import {finalize, switchMap, tap} from 'rxjs/operators';
 import {User} from './user.model';
-import {Injectable} from '@angular/core';
+import {Injectable, NgZone} from '@angular/core';
+import {Router} from '@angular/router';
 
 export interface UserStateModel {
   isWaitingForMyUser: boolean;
@@ -21,7 +22,9 @@ export interface UserStateModel {
 export class UserState {
 
   constructor(
-    private userService: UserService
+    private userService: UserService,
+    private router: Router,
+    private ngZone: NgZone
   ) {
   }
 
@@ -67,5 +70,24 @@ export class UserState {
         });
       })
     );
+  }
+
+  @Action(CloseIssue)
+  public closeIssue(ctx: StateContext<UserStateModel>, {issue}: CloseIssue) {
+    return this.userService.closeIssue(issue.id).pipe(
+      tap(user => ctx.patchState({myUser: user})),
+      switchMap(() => this.ngZone.run(() => this.router.navigateByUrl('/tabs/issue-feed')))
+    );
+  }
+
+  @Action(IssueClosed)
+  public issueClosed(ctx: StateContext<UserStateModel>, {event}: IssueClosed) {
+    const myUser = ctx.getState().myUser;
+    const myNewUser = event.participants.find(participant => myUser.id === participant.id);
+    if (!myNewUser) {
+      return;
+    }
+    ctx.patchState({myUser: myNewUser});
+    return this.ngZone.run(() => this.router.navigateByUrl('/tabs/issue-feed'));
   }
 }

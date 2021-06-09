@@ -5,7 +5,7 @@
 </ion-header>
 
 <ion-content>
-  <app-issue *ngIf="currentIssue$ | async as issue" [issue]="issue"></app-issue>
+  <app-issue *ngIf="currentIssue$ | async as issue" [issue]="issue" [enabledActions]="enabledIssueActions$ | async"></app-issue>
   <ng-container *ngIf="supportState$ | async as supportState">
     <!-- waiting for user -->
     <ng-container *ngIf="!supportState.participants.length > 0">

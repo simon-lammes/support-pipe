@@ -39,7 +39,10 @@ export class IssueService {
   }
 
   getIssueById(issueId: number) {
-    return this.http.get<Issue>(environment.quarkusBaseUrl + `/issues/${issueId}`, );
+    if (!issueId) {
+      throw new Error();
+    }
+    return this.http.get<Issue>(environment.quarkusBaseUrl + `/issues/${issueId}`);
   }
 
   getParticipants(issueId: number) {

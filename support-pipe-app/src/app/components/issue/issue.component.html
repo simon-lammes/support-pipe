@@ -5,12 +5,16 @@
 
   <ion-card-content>
     <span>{{ issue.description }}</span>
-    <ion-buttons *ngIf="isProposal">
-      <ion-button color="danger" (click)="rejectIssue()" [disabled]="!isIssueEnabled">
+    <ion-buttons *ngIf="enabledActions?.length > 0">
+      <ion-button *ngIf="enabledActions.includes('reject')" color="danger" (click)="rejectIssue()" [disabled]="!isIssueEnabled">
         <ion-icon slot="icon-only" name="close"></ion-icon>
       </ion-button>
-      <ion-button color="success" (click)="supportIssue()" [disabled]="!isIssueEnabled">
+      <ion-button *ngIf="enabledActions.includes('support')" color="success" (click)="supportIssue()" [disabled]="!isIssueEnabled">
         <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
+      </ion-button>
+      <ion-button *ngIf="enabledActions.includes('close')" color="danger" (click)="closeIssue()" [disabled]="!isIssueEnabled">
+        <ion-label>close issue</ion-label>
+        <ion-icon slot="end" name="checkmark-done-circle"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-card-content>

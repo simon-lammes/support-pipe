@@ -1,6 +1,6 @@
 import {Action, Selector, State, StateContext, Store} from '@ngxs/store';
 import {AddSupporter, LoadMessages, LoadParticipants, ReceiveMessage, SendMessage} from './support.actions';
-import {Injectable} from '@angular/core';
+import {Injectable, NgZone} from '@angular/core';
 import {User} from '../user/user.model';
 import {IssueService} from '../issue/issue.service';
 import {tap} from 'rxjs/operators';
@@ -35,7 +35,8 @@ export class SupportState {
     private issueService: IssueService,
     private messageService: MessageService,
     private router: Router,
-    private store: Store
+    private store: Store,
+    private ngZone: NgZone
   ) {
   }
 
@@ -60,7 +61,7 @@ export class SupportState {
       participants: [...ctx.getState().participants, supportEvent.supporter]
     });
     // If the user is not already at the support page, we need to navigate him there!
-    this.router.navigateByUrl('/support').then();
+    return this.ngZone.run(() => this.router.navigateByUrl('/support'));
   }
 
   @Action(LoadParticipants)

@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Select, Store} from '@ngxs/store';
 import {UserState} from '../../cross-cutting/user/user.state';
-import {Observable} from 'rxjs';
+import {combineLatest, Observable} from 'rxjs';
 import {User} from '../../cross-cutting/user/user.model';
 import {OptimisticSupportStateModel, SupportState} from '../../cross-cutting/support/support.state';
 import {Issue} from '../../cross-cutting/issue/issue.model';
@@ -11,6 +11,7 @@ import {LoadIssue} from '../../cross-cutting/issue/issue.actions';
 import {IssueState} from '../../cross-cutting/issue/issue.state';
 import {LoadMessages, LoadParticipants, SendMessage} from '../../cross-cutting/support/support.actions';
 import {Message} from '../../cross-cutting/message/message.service';
+import {IssueAction} from '../../components/issue/issue.component';
 
 @Component({
   selector: 'app-support',
@@ -24,6 +25,8 @@ export class SupportPage implements OnInit {
 
   currentIssueId$: Observable<number>;
   currentIssue$: Observable<Issue>;
+  isAuthorOfIssue$: Observable<boolean>;
+  enabledIssueActions$: Observable<IssueAction[]>;
   messageForm: FormGroup;
 
   /**
@@ -36,7 +39,7 @@ export class SupportPage implements OnInit {
     private fb: FormBuilder
   ) {
     this.currentIssueId$ = this.user$.pipe(
-      map(user => user.currentlyTackledIssueId ?? user.currentlyTackledIssueId)
+      map(user => user.currentlyTackledIssueId)
     );
     this.currentIssue$ = this.currentIssueId$.pipe(
       switchMap(async issueId => {
@@ -64,6 +67,12 @@ export class SupportPage implements OnInit {
         }
         return messageBlocks;
       })
+    );
+    this.isAuthorOfIssue$ = combineLatest([this.currentIssue$, this.user$]).pipe(
+      map(([issue, user]) => issue?.creatorId === user.id)
+    );
+    this.enabledIssueActions$ = this.isAuthorOfIssue$.pipe(
+      map(isAuthor => isAuthor ? ['close'] : [])
     );
   }
 
