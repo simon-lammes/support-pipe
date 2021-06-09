@@ -1,12 +1,7 @@
 package de.simonlammes.message;
 
-import de.simonlammes.issue.Issue;
-import de.simonlammes.issue.IssueRepository;
 import de.simonlammes.stream.event.MessageEvent;
-import de.simonlammes.stream.event.SupportEvent;
-import de.simonlammes.user.User;
 import de.simonlammes.user.UserRepository;
-import io.quarkus.hibernate.reactive.panache.PanacheRepository;
 import io.quarkus.security.Authenticated;
 import io.smallrye.mutiny.Uni;
 import org.eclipse.microprofile.jwt.Claim;
@@ -52,6 +47,8 @@ public class MessageResource {
             if (user.getId() != message.getAuthorId()) {
                 throw new ForbiddenException("The author id does not match the id of the user issuing the request.");
             }
+            // This information needs to be manually set this time.
+            message.setAuthor(user);
         }).onItem()
                 .invoke(() -> message.setTimestamp(Timestamp.from(Instant.now())))
                 .call(() -> messageRepository.persistAndFlush(message))
