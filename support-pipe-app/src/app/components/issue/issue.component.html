@@ -6,10 +6,10 @@
   <ion-card-content>
     <span>{{ issue.description }}</span>
     <ion-buttons *ngIf="isProposal">
-      <ion-button color="danger" (click)="rejectIssue()">
+      <ion-button color="danger" (click)="rejectIssue()" [disabled]="!isIssueEnabled">
         <ion-icon slot="icon-only" name="close"></ion-icon>
       </ion-button>
-      <ion-button color="success" (click)="supportIssue()">
+      <ion-button color="success" (click)="supportIssue()" [disabled]="!isIssueEnabled">
         <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
