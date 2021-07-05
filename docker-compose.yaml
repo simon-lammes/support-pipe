@@ -12,7 +12,7 @@ networks:
 
 services:
   postgres:
-    image: postgres
+    image: postgres:13
     volumes:
       - database_data:/var/lib/postgresql/data
     environment:
@@ -22,7 +22,7 @@ services:
     ports:
       - 5433:5432
   keycloak_database:
-    image: postgres
+    image: postgres:13
     volumes:
       - keycloak_data:/var/lib/postgresql/data
     environment:
