@@ -6,6 +6,7 @@ import {Router} from '@angular/router';
 import {SupportProposalAction} from '../../cross-cutting/user/user.actions';
 import {IssueState, IssueStateModel} from '../../cross-cutting/issue/issue.state';
 import {LoadProposalAction, RejectProposalAction} from '../../cross-cutting/issue/issue.actions';
+import {filter} from 'rxjs/operators';
 
 @Component({
   selector: 'app-issue-feed',
@@ -23,7 +24,12 @@ export class IssueFeedPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.store.dispatch(new LoadProposalAction());
+    // Whenever the issue state changes and we do not have a proposal, we try to load one.
+    this.issueState$.pipe(
+      filter(state => state.proposalState !== 'found' && state.proposalState !== 'loading')
+    ).subscribe(() =>
+      this.store.dispatch(new LoadProposalAction())
+    );
   }
 
   async onProposalRejected(issue: Issue) {

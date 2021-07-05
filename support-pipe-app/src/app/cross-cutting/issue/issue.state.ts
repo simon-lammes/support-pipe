@@ -77,6 +77,9 @@ export class IssueState {
 
   @Action(LoadProposalAction)
   public loadProposal(ctx: StateContext<IssueStateModel>) {
+    if (ctx.getState().proposalState === 'loading') {
+      return;
+    }
     const excludedIssueIds = ctx.getState().rejectedProposalIds;
     ctx.patchState({
       proposalState: 'loading'

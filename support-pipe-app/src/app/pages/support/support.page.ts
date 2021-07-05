@@ -6,7 +6,7 @@ import {User} from '../../cross-cutting/user/user.model';
 import {OptimisticSupportStateModel, SupportState} from '../../cross-cutting/support/support.state';
 import {Issue} from '../../cross-cutting/issue/issue.model';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {first, map, switchMap} from 'rxjs/operators';
+import {filter, first, map, switchMap} from 'rxjs/operators';
 import {LoadIssue} from '../../cross-cutting/issue/issue.actions';
 import {IssueState} from '../../cross-cutting/issue/issue.state';
 import {LoadMessages, LoadParticipants, SendMessage} from '../../cross-cutting/support/support.actions';
@@ -77,7 +77,12 @@ export class SupportPage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.currentIssueId$.pipe(first()).subscribe(currentIssueId =>
+    // Whenever the issue changes, the participants and messages need to be loaded again.
+    // Otherwise, we might be stuck with old participants and messages that don't belong to the new issue.
+    this.currentIssueId$.pipe(
+      // Without this filter, we could trigger loading of messages although we currently have no issue.
+      filter(issueId => !!issueId)
+    ).subscribe(currentIssueId =>
       this.store.dispatch([
         new LoadParticipants(currentIssueId),
         new LoadMessages(currentIssueId)
