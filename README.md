@@ -13,8 +13,9 @@ A messenger application that improves the way team members can ask for help.
 
 ### Starting The Application
 
-1. Make sure you have node, maven and docker installed. Versions that work for sure are: 
+1. Make sure you have node, ionic-cli, maven and docker installed. Versions that work for sure are: 
     - node 12.19.0
+    - ionic-cli 6.16.3
     - maven 3.6.3
     - docker 20.10.7
 1. Run `docker-compose up` in the root of the project and wait for all containers to start successfully. Make sure no container errored out during startup.
