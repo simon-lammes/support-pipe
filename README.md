@@ -19,7 +19,7 @@ A messenger application that improves the way team members can ask for help.
     - docker 20.10.7
 1. Run `docker-compose up` in the root of the project and wait for all containers to start successfully. Make sure no container errored out during startup.
 1. Run `mvnw quarkus:dev` or `mvn quarkus:dev` in the project `support-pipe-quarkus`.
-1. Run `npm ci && npm run serve` in the project `support-pipe-app`.
+1. Run `npm ci && npm run start` in the project `support-pipe-app`.
 
 ### Getting familiar with the application
 
